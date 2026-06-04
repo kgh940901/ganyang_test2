@@ -20,7 +20,7 @@
     <main class="sim">
         <div class="sim__layout">
 
-            <!-- 미리보기 -->
+            <!-- ── 미리보기 (좌) ── -->
             <div class="sim__preview">
                 <div class="sim__scene">
                     <div class="sim__mat-wrap">
@@ -33,14 +33,14 @@
                 </div>
                 <div class="sim__badge">
                     <span class="sim__badge-dot"></span>
-                    <span id="badgeText">아이보리 소파 + 아이보리 매트</span>
+                    <span id="badgeText">색상을 선택해주세요</span>
                 </div>
             </div>
 
-            <!-- 옵션 패널 -->
+            <!-- ── 옵션 패널 (우) ── -->
             <div class="sim__panel">
 
-                <!-- STEP 01 소파 -->
+                <!-- STEP 01 소파 색상 (시각적 참고용) -->
                 <div class="sim__step">
                     <div class="sim__step-head">
                         <span class="sim__step-num">01</span>
@@ -54,7 +54,7 @@
 
                 <div class="sim__rule"></div>
 
-                <!-- STEP 02 매트 -->
+                <!-- STEP 02 매트 색상 (구매 옵션) -->
                 <div class="sim__step">
                     <div class="sim__step-head">
                         <span class="sim__step-num">02</span>
@@ -66,42 +66,57 @@
                     <div class="sim__swatches" id="matSwatches" role="radiogroup" aria-label="매트 색상"></div>
                 </div>
 
-                <!-- 현재 선택 -->
-                <div class="sim__sel-card">
-                    <span class="sim__sel-label">현재 선택</span>
-                    <span id="selText" class="sim__sel-value">아이보리 소파 + 아이보리 매트</span>
+                <!-- ── 선택된 상품 박스 ── -->
+                <div class="opt-box" id="optBox">
+
+                    <!-- 아무것도 선택 안 됐을 때 -->
+                    <div class="opt-empty" id="optEmpty">
+                        매트 색상을 선택해주세요
+                    </div>
+
+                    <!-- 선택된 항목 (JS로 동적 생성) -->
+                    <div class="opt-items" id="optItems"></div>
+
                 </div>
 
-                <!-- 수량 + 장바구니 -->
-                <div class="cart-area">
-                    <div class="cart-qty">
-                        <button class="cart-qty__btn" id="qtyMinus" aria-label="수량 감소">−</button>
-                        <span class="cart-qty__val" id="qtyVal">1</span>
-                        <button class="cart-qty__btn" id="qtyPlus" aria-label="수량 증가">+</button>
-                    </div>
-                    <button class="cart-btn" id="cartBtn" onclick="addToCart()">
-                        <span class="cart-btn__text">장바구니 담기</span>
-                        <span class="cart-btn__spinner" aria-hidden="true"></span>
+                <!-- ── 총 상품금액 ── -->
+                <div class="opt-total" id="optTotal" style="display:none">
+                    <span class="opt-total__label">총 상품금액</span>
+                    <strong class="opt-total__price" id="totalPrice">0원</strong>
+                </div>
+
+                <!-- ── 구매 버튼 영역 ── -->
+                <div class="buy-area">
+                    <button class="buy-btn buy-btn--cart" id="cartBtn" onclick="addToCart()" disabled>
+                        장바구니 담기
+                    </button>
+                    <button class="buy-btn buy-btn--now" id="buyBtn" onclick="buyNow()" disabled>
+                        바로 구매
                     </button>
                 </div>
 
             </div>
+            <!-- /sim__panel -->
+
         </div>
     </main>
 
-    <!-- 하단 고정 바 (모바일용) -->
+    <!-- ── 하단 고정 바 (모바일) ── -->
     <footer class="gf">
         <div class="gf__inner">
             <div class="gf__info">
-                <span class="gf__label">선택 매트</span>
-                <span id="footerText" class="gf__value">아이보리 매트</span>
+                <span class="gf__label" id="gfLabel">색상을 선택해주세요</span>
+                <span class="gf__price" id="gfPrice" style="display:none"></span>
             </div>
-            <button class="gf__cart-btn" onclick="addToCart()">장바구니 담기</button>
+            <div class="gf__btns">
+                <button class="gf__btn gf__btn--cart" id="gfCartBtn" onclick="addToCart()" disabled>장바구니</button>
+                <button class="gf__btn gf__btn--now" id="gfBuyBtn" onclick="buyNow()" disabled>바로 구매</button>
+            </div>
         </div>
     </footer>
 
-    <!-- 장바구니 토스트 알림 -->
-    <div class="toast" id="toast" role="alert" aria-live="polite">
+    <!-- 토스트 -->
+    <div class="toast" id="toast" role="alert">
         <span class="toast__icon">✓</span>
         <span id="toastMsg">장바구니에 담겼습니다.</span>
     </div>
