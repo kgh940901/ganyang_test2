@@ -40,30 +40,37 @@
             <!-- 옵션 패널 (우) -->
             <div class="sim__panel">
 
-                <!-- STEP 01 소파 색상 -->
-                <div class="sim__step">
-                    <div class="sim__step-head">
-                        <span class="sim__step-num">01</span>
-                        <div>
-                            <h2 class="sim__step-title">소파 색상</h2>
-                            <p class="sim__step-desc">내 소파와 가장 가까운 색상을 선택하세요</p>
+                <!-- 옵션 드롭다운 행 -->
+                <div class="opt-rows">
+
+                    <!-- 소파 색상 -->
+                    <div class="opt-row">
+                        <span class="opt-row__label">소파 색상</span>
+                        <div class="dropdown" id="sofaDrop">
+                            <button class="dropdown__btn" onclick="toggleDrop('sofaDrop')" type="button">
+                                <span id="sofaDropVal" class="dropdown__cur is-ph">- 옵션을 선택해 주세요 -</span>
+                                <svg class="dropdown__chevron" viewBox="0 0 10 6" fill="none">
+                                    <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <ul class="dropdown__list" id="sofaDropList"></ul>
                         </div>
                     </div>
-                    <div class="sim__swatches" id="sofaSwatches" role="radiogroup" aria-label="소파 색상"></div>
-                </div>
 
-                <div class="sim__rule"></div>
-
-                <!-- STEP 02 매트 색상 -->
-                <div class="sim__step">
-                    <div class="sim__step-head">
-                        <span class="sim__step-num">02</span>
-                        <div>
-                            <h2 class="sim__step-title">매트 색상</h2>
-                            <p class="sim__step-desc">원하는 색상을 클릭하면 아래에 추가됩니다</p>
+                    <!-- 매트 색상 -->
+                    <div class="opt-row">
+                        <span class="opt-row__label">매트 색상</span>
+                        <div class="dropdown" id="matDrop">
+                            <button class="dropdown__btn" onclick="toggleDrop('matDrop')" type="button">
+                                <span id="matDropVal" class="dropdown__cur is-ph">- [필수] 옵션을 선택해 주세요 -</span>
+                                <svg class="dropdown__chevron" viewBox="0 0 10 6" fill="none">
+                                    <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <ul class="dropdown__list" id="matDropList"></ul>
                         </div>
                     </div>
-                    <div class="sim__swatches" id="matSwatches" role="radiogroup" aria-label="매트 색상"></div>
+
                 </div>
 
                 <!-- 선택된 상품 박스 -->

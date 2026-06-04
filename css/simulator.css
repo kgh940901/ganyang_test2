@@ -165,86 +165,115 @@ body {
 .sim__panel {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0;
 }
 
-.sim__step-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 11px;
-    margin-bottom: 14px;
-}
-.sim__step-num   { font-family: var(--serif); font-size: 22px; color: var(--text-3); letter-spacing: -1px; line-height: 1; flex-shrink: 0; padding-top: 2px; }
-.sim__step-title { font-size: 14px; font-weight: 700; color: var(--text-1); }
-.sim__step-desc  { font-size: 11px; color: var(--text-2); margin-top: 2px; }
-
-.sim__rule { border: none; border-top: 1px solid var(--border); }
-
-/* ── 스와치 ── */
-.sim__swatches {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 7px;
-}
-.sw {
+/* ── 옵션 행 (라벨 + 드롭다운) ── */
+.opt-rows {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 4px;
-    border-radius: 9px;
-    border: 1.5px solid transparent;
-    background: transparent;
-    cursor: pointer;
-    font-family: var(--sans);
-    transition: all var(--ease);
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--white);
+    margin-bottom: 14px;
 }
-.sw:hover  { background: var(--white); border-color: var(--border); }
-.sw.is-on  { background: var(--white); border-color: var(--text-1); }
-
-.sw__dot {
-    position: relative;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(0,0,0,0.08);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-    flex-shrink: 0;
-    transition: transform var(--ease), box-shadow var(--ease);
-}
-.sw:hover .sw__dot { transform: scale(1.1); }
-.sw.is-on .sw__dot {
-    transform: scale(1.05);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12), 0 0 0 2.5px var(--white), 0 0 0 4.5px var(--text-1);
-}
-.sw.is-on .sw__dot::after {
-    content: '✓';
-    position: absolute;
-    inset: 0;
+.opt-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.92);
-    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    padding: 0 14px;
+    border-bottom: 1px solid var(--border);
+    min-height: 52px;
 }
-.sw.is-on .sw__dot.is-light::after { color: rgba(0,0,0,0.55); text-shadow: none; }
-
-.sw__name {
-    font-size: 9.5px;
+.opt-row:last-child { border-bottom: none; }
+.opt-row__label {
+    width: 72px;
+    flex-shrink: 0;
+    font-size: 12.5px;
+    font-weight: 600;
     color: var(--text-2);
-    text-align: center;
-    line-height: 1.3;
+    white-space: nowrap;
+}
+
+/* ── 드롭다운 ── */
+.dropdown {
+    flex: 1;
+    position: relative;
+}
+.dropdown__btn {
+    width: 100%;
+    height: 52px;
+    padding: 0 4px 0 10px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    font-family: var(--sans);
+    text-align: left;
+}
+.dropdown__cur {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
-    transition: color var(--ease);
 }
-.sw.is-on .sw__name { color: var(--text-1); font-weight: 600; }
+.dropdown__cur.is-ph { color: var(--text-3); }
+
+.dropdown__chevron {
+    width: 10px;
+    height: 6px;
+    flex-shrink: 0;
+    color: var(--text-2);
+    transition: transform var(--ease);
+}
+.dropdown.is-open .dropdown__chevron { transform: rotate(180deg); }
+
+/* 드롭다운 리스트 */
+.dropdown__list {
+    display: none;
+    position: absolute;
+    top: calc(100% + 1px);
+    left: -14px;              /* opt-row padding 맞춤 */
+    right: -14px;
+    background: var(--white);
+    border: 1.5px solid var(--text-1);
+    border-top: none;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 50;
+    list-style: none;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+.dropdown.is-open .dropdown__list { display: block; }
+
+.dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    font-size: 13px;
+    color: var(--text-1);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background var(--ease);
+}
+.dropdown__item:last-child { border-bottom: none; }
+.dropdown__item:hover { background: #F0F0EE; }
+.dropdown__item.is-selected { background: #EAEAE8; font-weight: 600; }
+
+/* 드롭다운 색상 원 */
+.dropdown__dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.1);
+}
 
 /* ================================================================
    선택된 상품 박스 (한국 쇼핑몰 스타일)
@@ -540,12 +569,6 @@ body {
     .sim__preview { flex: 1; position: sticky; top: 28px; }
     .sim__panel   { width: 380px; flex-shrink: 0; gap: 22px; }
 
-    .sim__swatches { grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 9px; }
-    .sw__dot         { width: 42px; height: 42px; }
-    .sw__name        { font-size: 10px; }
-    .sim__step-num   { font-size: 24px; }
-    .sim__step-title { font-size: 14.5px; }
-    .sim__step-desc  { font-size: 11.5px; }
     .opt-total__price { font-size: 24px; }
     .buy-btn { height: 52px; font-size: 14.5px; }
 

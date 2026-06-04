@@ -75,6 +75,14 @@ const gfBuyEl    = document.getElementById('gfBuyBtn');
 const gfLabelEl  = document.getElementById('gfLabel');
 const gfPriceEl  = document.getElementById('gfPrice');
 
+/* 드롭다운 DOM */
+const sofaDropEl     = document.getElementById('sofaDrop');
+const matDropEl      = document.getElementById('matDrop');
+const sofaDropValEl  = document.getElementById('sofaDropVal');
+const matDropValEl   = document.getElementById('matDropVal');
+const sofaDropListEl = document.getElementById('sofaDropList');
+const matDropListEl  = document.getElementById('matDropList');
+
 /* ================================================================
    4. SVG 생성 — 소파 일러스트
    ================================================================ */
@@ -314,9 +322,6 @@ function removeItem(matId) {
     if (idx === -1) return;
     cartItems.splice(idx, 1);
 
-    /* 스와치 is-on 해제 */
-    syncSwatchStates();
-
     /* 미리보기: 남은 항목 중 마지막 것 표시 */
     state.previewMat = cartItems.length
         ? cartItems[cartItems.length - 1].mat
@@ -326,41 +331,66 @@ function removeItem(matId) {
     updateBadge();
 }
 
-/* 스와치 선택 상태를 cartItems 기준으로 동기화 */
-function syncSwatchStates() {
-    const inCart = new Set(cartItems.map(i => i.mat.id));
-    matSwEl.querySelectorAll('.sw').forEach(btn => {
-        const on = inCart.has(btn.dataset.id);
-        btn.classList.toggle('is-on', on);
-        btn.setAttribute('aria-checked', on ? 'true' : 'false');
-    });
-}
 
 /* ================================================================
-   11. 스와치 클릭
+   11. 드롭다운 — 열기/닫기
    ================================================================ */
-function onSwatchClick(item, type) {
-    if (type === 'sofa') {
-        state.sofa = item;
-        setActive(sofaSwEl, item.id);
-        updateSofaVisual(item);
-        updateBadge();
-        return;
-    }
+function toggleDrop(id) {
+    const el = document.getElementById(id);
+    const isOpen = el.classList.contains('is-open');
+    /* 다른 드롭다운 모두 닫기 */
+    document.querySelectorAll('.dropdown.is-open').forEach(d => d.classList.remove('is-open'));
+    if (!isOpen) el.classList.add('is-open');
+}
 
-    /* 매트 선택 — 이미 있으면 수량 +1, 없으면 신규 추가 */
-    const existing = cartItems.find(i => i.mat.id === item.id);
+function closeDrop(id) {
+    document.getElementById(id).classList.remove('is-open');
+}
+
+/* 외부 클릭 시 모두 닫기 */
+document.addEventListener('click', e => {
+    if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown.is-open').forEach(d => d.classList.remove('is-open'));
+    }
+});
+
+/* ── 소파 선택 ── */
+function selectSofa(sofa) {
+    state.sofa = sofa;
+
+    /* 드롭다운 표시값 업데이트 */
+    sofaDropValEl.textContent = sofa.name;
+    sofaDropValEl.classList.remove('is-ph');
+
+    /* 선택된 항목 강조 */
+    sofaDropListEl.querySelectorAll('.dropdown__item').forEach(li => {
+        li.classList.toggle('is-selected', li.dataset.id === sofa.id);
+    });
+
+    closeDrop('sofaDrop');
+    updateSofaVisual(sofa);
+    updateBadge();
+}
+
+/* ── 매트 선택 ── */
+function selectMat(mat) {
+    /* 이미 있으면 수량 +1, 없으면 신규 추가 */
+    const existing = cartItems.find(i => i.mat.id === mat.id);
     if (existing) {
         existing.qty = Math.min(existing.qty + 1, 99);
     } else {
-        cartItems.push({ mat: item, qty: 1 });
+        cartItems.push({ mat, qty: 1 });
     }
 
-    /* 미리보기는 방금 선택한 매트로 변경 */
-    state.previewMat = item;
-    updateMatVisual(item);
+    /* 드롭다운 리셋 (다음 선택을 위해) */
+    matDropValEl.textContent = '- [필수] 옵션을 선택해 주세요 -';
+    matDropValEl.classList.add('is-ph');
+    matDropListEl.querySelectorAll('.dropdown__item').forEach(li => li.classList.remove('is-selected'));
 
-    syncSwatchStates();
+    closeDrop('matDrop');
+
+    state.previewMat = mat;
+    updateMatVisual(mat);
     renderOptBox();
     updateBadge();
 }
@@ -398,13 +428,6 @@ function goToProduct(type) {
 /* ================================================================
    13. 유틸리티
    ================================================================ */
-function setActive(container, id) {
-    container.querySelectorAll('.sw').forEach(b => {
-        const on = b.dataset.id === id;
-        b.classList.toggle('is-on', on);
-        b.setAttribute('aria-checked', on ? 'true' : 'false');
-    });
-}
 
 function shade(hex, amount) {
     const n = parseInt(hex.replace('#', ''), 16);
@@ -435,31 +458,22 @@ function showToast(msg) {
 }
 
 /* ================================================================
-   14. 스와치 렌더링
+   14. 드롭다운 리스트 렌더링
    ================================================================ */
-function renderSwatches(container, items, type) {
-    container.innerHTML = '';
+function buildDropList(listEl, items, onSelect) {
+    listEl.innerHTML = '';
     items.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'sw';
-        btn.setAttribute('role', 'radio');
-        btn.setAttribute('aria-checked', 'false');
-        btn.setAttribute('aria-label', item.name);
-        btn.dataset.id   = item.id;
-        btn.dataset.type = type;
-
-        const dot = document.createElement('span');
-        dot.className = 'sw__dot' + (isLightColor(item.color) ? ' is-light' : '');
-        dot.style.backgroundColor = item.color;
-
-        const name = document.createElement('span');
-        name.className   = 'sw__name';
-        name.textContent = item.name;
-
-        btn.appendChild(dot);
-        btn.appendChild(name);
-        btn.addEventListener('click', () => onSwatchClick(item, type));
-        container.appendChild(btn);
+        const li = document.createElement('li');
+        li.className = 'dropdown__item';
+        li.dataset.id = item.id;
+        li.innerHTML = `
+            <span class="dropdown__dot" style="background:${item.color}"></span>
+            ${item.name}`;
+        li.addEventListener('click', e => {
+            e.stopPropagation();
+            onSelect(item);
+        });
+        listEl.appendChild(li);
     });
 }
 
@@ -467,11 +481,12 @@ function renderSwatches(container, items, type) {
    15. 초기화
    ================================================================ */
 function init() {
-    renderSwatches(sofaSwEl, SOFAS, 'sofa');
-    renderSwatches(matSwEl,  MATS,  'mat');
-    setActive(sofaSwEl, state.sofa.id);
+    buildDropList(sofaDropListEl, SOFAS, selectSofa);
+    buildDropList(matDropListEl,  MATS,  selectMat);
 
-    updateSofaVisual(state.sofa);
+    /* 소파 기본 선택 */
+    selectSofa(state.sofa);
+
     updateMatVisual(null);
     renderOptBox();
     updateBadge();
