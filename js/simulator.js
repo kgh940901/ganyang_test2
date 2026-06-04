@@ -55,10 +55,11 @@ const MATS = [
    2. 상태
    ================================================================ */
 const state = {
-    sofa: SOFAS[0],   /* 시각화용 소파 (카트에 영향 없음) */
-    mat:  null,       /* 선택된 매트 (null = 미선택) */
-    qty:  1,
+    sofa:      SOFAS[0],  /* 시각화용 소파 */
+    previewMat: null,     /* 미리보기에 표시 중인 매트 (마지막 선택) */
 };
+/* 장바구니 담을 항목 목록 — { mat, qty } */
+const cartItems = [];
 
 /* ================================================================
    3. DOM 참조
@@ -207,14 +208,13 @@ function updateMatVisual(mat) {
 }
 
 /* ================================================================
-   7. 선택 상품 박스 업데이트
+   7. 선택 상품 박스 — 전체 렌더링
    ================================================================ */
 function renderOptBox() {
-    if (!state.mat) {
-        /* 미선택 상태 */
-        optEmptyEl.style.display  = 'block';
-        optItemsEl.innerHTML      = '';
-        optTotalEl.style.display  = 'none';
+    if (cartItems.length === 0) {
+        optEmptyEl.style.display = 'block';
+        optItemsEl.innerHTML     = '';
+        optTotalEl.style.display = 'none';
         setButtonsEnabled(false);
         updateFooter(null);
         return;
@@ -222,36 +222,47 @@ function renderOptBox() {
 
     optEmptyEl.style.display = 'none';
 
-    /* 아이템 카드 생성 */
-    const price     = CAFE24.price * state.qty;
-    const priceText = CAFE24.price ? fmtPrice(price) : '가격 미설정';
-
-    optItemsEl.innerHTML = `
-      <div class="opt-item">
-        <div class="opt-item__top">
-          <span class="opt-item__name">소파 바닥매트 / ${state.mat.name}</span>
-          <button class="opt-item__del" onclick="clearMat()" aria-label="선택 취소" title="선택 취소">×</button>
-        </div>
-        <div class="opt-item__bottom">
-          <div class="opt-qty">
-            <button class="opt-qty__btn" onclick="changeQty(-1)" aria-label="수량 감소">−</button>
-            <span class="opt-qty__val" id="optQtyVal">${state.qty}</span>
-            <button class="opt-qty__btn" onclick="changeQty(+1)" aria-label="수량 증가">+</button>
+    /* 항목 카드 목록 */
+    optItemsEl.innerHTML = cartItems.map(({ mat, qty }) => {
+        const itemPrice = CAFE24.price ? fmtPrice(CAFE24.price * qty) : '가격 미설정';
+        return `
+        <div class="opt-item" data-mat-id="${mat.id}">
+          <div class="opt-item__top">
+            <span class="opt-item__name">소파 바닥매트 / ${mat.name}</span>
+            <button class="opt-item__del"
+              onclick="removeItem('${mat.id}')"
+              aria-label="${mat.name} 선택 취소">×</button>
           </div>
-          <span class="opt-item__price" id="optItemPrice">${priceText}</span>
-        </div>
-      </div>`;
+          <div class="opt-item__bottom">
+            <div class="opt-qty">
+              <button class="opt-qty__btn"
+                onclick="changeItemQty('${mat.id}', -1)"
+                aria-label="수량 감소">−</button>
+              <span class="opt-qty__val">${qty}</span>
+              <button class="opt-qty__btn"
+                onclick="changeItemQty('${mat.id}', +1)"
+                aria-label="수량 증가">+</button>
+            </div>
+            <span class="opt-item__price">${itemPrice}</span>
+          </div>
+        </div>`;
+    }).join('');
 
     /* 총 금액 */
     if (CAFE24.price) {
-        totalPrEl.textContent    = fmtPrice(price);
+        totalPrEl.textContent    = fmtPrice(calcTotal());
         optTotalEl.style.display = 'flex';
     } else {
         optTotalEl.style.display = 'none';
     }
 
     setButtonsEnabled(true);
-    updateFooter(state.mat);
+    updateFooter();
+}
+
+/* 총 금액 계산 */
+function calcTotal() {
+    return cartItems.reduce((sum, { qty }) => sum + CAFE24.price * qty, 0);
 }
 
 /* ================================================================
@@ -263,61 +274,73 @@ function setButtonsEnabled(on) {
     });
 }
 
-function updateFooter(mat) {
-    if (!mat) {
-        gfLabelEl.textContent    = '색상을 선택해주세요';
-        gfPriceEl.style.display  = 'none';
+function updateFooter() {
+    if (cartItems.length === 0) {
+        gfLabelEl.textContent   = '색상을 선택해주세요';
+        gfPriceEl.style.display = 'none';
         return;
     }
-    gfLabelEl.textContent = mat.name + ' 매트';
+    /* 선택된 색상 이름들 나열 */
+    const names = cartItems.map(i => i.mat.name).join(', ');
+    gfLabelEl.textContent = names;
     if (CAFE24.price) {
-        gfPriceEl.textContent   = fmtPrice(CAFE24.price * state.qty);
+        gfPriceEl.textContent   = '총 ' + fmtPrice(calcTotal());
         gfPriceEl.style.display = 'block';
     }
 }
 
 function updateBadge() {
-    if (!state.mat) {
+    if (cartItems.length === 0) {
         badgeEl.textContent = '색상을 선택해주세요';
         badgeDotEl.classList.remove('is-active');
     } else {
-        badgeEl.textContent = `${state.sofa.name} 소파 + ${state.mat.name} 매트`;
+        const names = cartItems.map(i => i.mat.name).join(' · ');
+        badgeEl.textContent = `${state.sofa.name} 소파 + ${names} 매트`;
         badgeDotEl.classList.add('is-active');
     }
 }
 
 /* ================================================================
-   9. 수량 변경
+   9. 항목별 수량 변경
    ================================================================ */
-function changeQty(delta) {
-    const next = state.qty + delta;
-    if (next < 1 || next > 99) return;
-    state.qty = next;
-    /* 수량값 + 가격 즉시 업데이트 */
-    const qEl = document.getElementById('optQtyVal');
-    const pEl = document.getElementById('optItemPrice');
-    if (qEl) qEl.textContent = state.qty;
-    if (pEl && CAFE24.price) pEl.textContent = fmtPrice(CAFE24.price * state.qty);
-    if (CAFE24.price) {
-        totalPrEl.textContent = fmtPrice(CAFE24.price * state.qty);
-        if (gfPriceEl) gfPriceEl.textContent = fmtPrice(CAFE24.price * state.qty);
-    }
+function changeItemQty(matId, delta) {
+    const item = cartItems.find(i => i.mat.id === matId);
+    if (!item) return;
+    const next = item.qty + delta;
+    if (next < 1) { removeItem(matId); return; }
+    if (next > 99) return;
+    item.qty = next;
+    renderOptBox();    /* 전체 재렌더 (간단하고 일관성 있음) */
 }
 
 /* ================================================================
-   10. 매트 선택 / 해제
+   10. 항목 삭제
    ================================================================ */
-function clearMat() {
-    state.mat = null;
-    state.qty = 1;
-    /* 스와치 선택 해제 */
-    matSwEl.querySelectorAll('.sw').forEach(b => {
-        b.classList.remove('is-on');
-        b.setAttribute('aria-checked', 'false');
-    });
-    updateMatVisual(null);
+function removeItem(matId) {
+    const idx = cartItems.findIndex(i => i.mat.id === matId);
+    if (idx === -1) return;
+    cartItems.splice(idx, 1);
+
+    /* 스와치 is-on 해제 */
+    syncSwatchStates();
+
+    /* 미리보기: 남은 항목 중 마지막 것 표시 */
+    state.previewMat = cartItems.length
+        ? cartItems[cartItems.length - 1].mat
+        : null;
+    updateMatVisual(state.previewMat);
     renderOptBox();
     updateBadge();
+}
+
+/* 스와치 선택 상태를 cartItems 기준으로 동기화 */
+function syncSwatchStates() {
+    const inCart = new Set(cartItems.map(i => i.mat.id));
+    matSwEl.querySelectorAll('.sw').forEach(btn => {
+        const on = inCart.has(btn.dataset.id);
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
 }
 
 /* ================================================================
@@ -328,32 +351,47 @@ function onSwatchClick(item, type) {
         state.sofa = item;
         setActive(sofaSwEl, item.id);
         updateSofaVisual(item);
-    } else {
-        state.mat = item;
-        state.qty = 1;
-        setActive(matSwEl, item.id);
-        updateMatVisual(item);
-        renderOptBox();
+        updateBadge();
+        return;
     }
+
+    /* 매트 선택 — 이미 있으면 수량 +1, 없으면 신규 추가 */
+    const existing = cartItems.find(i => i.mat.id === item.id);
+    if (existing) {
+        existing.qty = Math.min(existing.qty + 1, 99);
+    } else {
+        cartItems.push({ mat: item, qty: 1 });
+    }
+
+    /* 미리보기는 방금 선택한 매트로 변경 */
+    state.previewMat = item;
+    updateMatVisual(item);
+
+    syncSwatchStates();
+    renderOptBox();
     updateBadge();
 }
 
 /* ================================================================
    12. 장바구니 / 바로구매
    ================================================================ */
-function addToCart()  { submitCafe24('cart'); }
-function buyNow()     { submitCafe24('order'); }
+function addToCart() { submitCafe24('cart'); }
+function buyNow()    { submitCafe24('order'); }
 
 function submitCafe24(type) {
-    if (!state.mat) { showToast('매트 색상을 선택해주세요.'); return; }
-
+    if (cartItems.length === 0) {
+        showToast('매트 색상을 선택해주세요.');
+        return;
+    }
     if (!CAFE24.productNo) {
         showToast('simulator.js의 CAFE24.productNo를 입력해주세요.');
         return;
     }
-    const optCode = CAFE24.optionCodes[state.mat.id];
-    if (!optCode) {
-        showToast(`"${state.mat.name}" 옵션코드를 입력해주세요.\n(CAFE24.optionCodes)`);
+
+    /* 옵션코드 미설정 항목 확인 */
+    const missing = cartItems.filter(i => !CAFE24.optionCodes[i.mat.id]);
+    if (missing.length) {
+        showToast(`"${missing[0].mat.name}" 옵션코드를 입력해주세요.`);
         return;
     }
 
@@ -361,31 +399,33 @@ function submitCafe24(type) {
         ? '/exec/front/order/basket/'
         : '/exec/front/order/order/';
 
-    const fields = [
-        ['product_no',  CAFE24.productNo],
-        ['option_code', optCode],
-        ['quantity',    state.qty],
-        ['basketType',  type === 'cart' ? 'cart' : 'direct'],
-    ];
-
     const isCafe24 = /cafe24\.(com|net)/.test(window.location.hostname)
                   || /sensemom\.com/.test(window.location.hostname);
 
     if (isCafe24) {
+        /* 카페24 다중 옵션 배열 폼 제출 */
         const form = Object.assign(document.createElement('form'), {
             method: 'post', action, style: 'display:none'
         });
-        fields.forEach(([n, v]) => {
-            const i = document.createElement('input');
-            Object.assign(i, { type: 'hidden', name: n, value: v });
-            form.appendChild(i);
+        cartItems.forEach(({ mat, qty }, idx) => {
+            [
+                [`product_no[${idx}]`,  CAFE24.productNo],
+                [`option_code[${idx}]`, CAFE24.optionCodes[mat.id]],
+                [`quantity[${idx}]`,    qty],
+                [`basketType[${idx}]`,  type === 'cart' ? 'cart' : 'direct'],
+            ].forEach(([n, v]) => {
+                const el = document.createElement('input');
+                Object.assign(el, { type: 'hidden', name: n, value: v });
+                form.appendChild(el);
+            });
         });
         document.body.appendChild(form);
         form.submit();
     } else {
         /* 미리보기 환경 */
-        const label = type === 'cart' ? '장바구니에 담겼습니다' : '구매 페이지로 이동합니다';
-        showToast(`✓ ${state.mat.name} 매트 ${state.qty}개 — ${label}`);
+        const summary = cartItems.map(i => `${i.mat.name} ${i.qty}개`).join(', ');
+        const label   = type === 'cart' ? '장바구니에 담겼습니다' : '구매 페이지로 이동합니다';
+        showToast(`${summary} — ${label}`);
     }
 }
 
@@ -466,7 +506,7 @@ function init() {
     setActive(sofaSwEl, state.sofa.id);
 
     updateSofaVisual(state.sofa);
-    updateMatVisual(null);   /* 매트 미선택 상태로 시작 */
+    updateMatVisual(null);  /* 매트 미선택 상태로 시작 */
     renderOptBox();
     updateBadge();
 }
