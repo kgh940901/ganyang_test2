@@ -1,31 +1,24 @@
 /* ================================================================
-   SIMULATOR.CSS — GANYANG 소파 바닥매트 상세페이지
+   SIMULATOR.CSS — GANYANG 소파 바닥매트 매칭 시뮬레이터
    ================================================================ */
 
-/* ── 변수 ── */
 :root {
-    --bg:        #F7F5F2;
-    --white:     #FFFFFF;
-    --text-1:    #1A1917;
-    --text-2:    #6A6866;
-    --text-3:    #ABA9A7;
-    --border:    #E5E3E0;
-    --border-2:  #D0CEC9;
-
-    /* 씬 배경 */
-    --wall:      #E8E4DF;
-    --floor:     #D8D4CE;
-
-    /* 폰트 */
-    --sans: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
-    --serif: 'Georgia', 'Times New Roman', serif;
-
-    --ease: 0.26s ease;
+    --bg:       #F7F5F2;
+    --white:    #FFFFFF;
+    --text-1:   #1A1917;
+    --text-2:   #6A6866;
+    --text-3:   #ABA9A7;
+    --border:   #E5E3E0;
+    --wall:     #E8E4DF;
+    --floor:    #D8D4CE;
+    --sans:     'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+    --serif:    'Georgia', 'Times New Roman', serif;
+    --ease:     0.25s ease;
 }
 
-/* ── 리셋 ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
+
 body {
     font-family: var(--sans);
     background: var(--bg);
@@ -34,109 +27,50 @@ body {
     -webkit-font-smoothing: antialiased;
     line-height: 1.6;
 }
-a { text-decoration: none; color: inherit; }
 
 /* ================================================================
-   헤더
-   ================================================================ */
-.gh {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 200;
-}
-.gh__inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    padding: 0 40px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.gh__logo {
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: 3px;
-    color: var(--text-1);
-}
-.gh__nav {
-    display: flex;
-    gap: 32px;
-}
-.gh__nav a {
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    color: var(--text-2);
-    transition: color var(--ease);
-}
-.gh__nav a:hover { color: var(--text-1); }
-
-/* ================================================================
-   상품 타이틀 배너
+   타이틀
    ================================================================ */
 .pt {
     background: var(--white);
     border-bottom: 1px solid var(--border);
-    padding: 48px 0 40px;
+    padding: 32px 20px 28px;
     text-align: center;
 }
-.pt__inner {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0 24px;
-}
 .pt__cat {
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 4px;
     color: var(--text-3);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 .pt__title {
-    font-size: 28px;
+    font-size: 20px;
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
     color: var(--text-1);
-    line-height: 1.3;
-    margin-bottom: 14px;
-}
-.pt__spec {
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    color: var(--text-3);
 }
 
 /* ================================================================
-   시뮬레이터 — 메인 레이아웃
+   시뮬레이터 — 모바일 기본 (단일 열)
    ================================================================ */
 .sim {
-    max-width: 1320px;
-    margin: 0 auto;
-    padding: 56px 40px;
+    padding: 24px 16px 100px; /* 하단 gf 높이만큼 여백 */
 }
 .sim__layout {
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 56px;
-    align-items: start;
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;  /* 모바일: 세로 */
+    gap: 28px;
 }
 
 /* ── 미리보기 ── */
-.sim__preview {
-    position: sticky;
-    top: 80px;
-}
-
-/* 룸 씬 */
 .sim__scene {
     position: relative;
     width: 100%;
     aspect-ratio: 3 / 2;
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
-
-    /* 벽(위 52%) + 바닥(아래 48%) */
     background: linear-gradient(
         180deg,
         var(--wall)  0%,
@@ -146,22 +80,20 @@ a { text-decoration: none; color: inherit; }
     );
     box-shadow:
         0 2px 4px rgba(0,0,0,0.04),
-        0 12px 40px rgba(0,0,0,0.10),
+        0 8px 32px rgba(0,0,0,0.10),
         0 0 0 1px var(--border);
 }
-
-/* 씬 내부 은은한 그림자 */
 .sim__scene::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 16px;
-    box-shadow: inset 0 0 60px rgba(0,0,0,0.06);
+    border-radius: 14px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.05);
     pointer-events: none;
     z-index: 10;
 }
 
-/* ── 매트 레이어 ── */
+/* 매트 */
 .sim__mat-wrap {
     position: absolute;
     bottom: 4%;
@@ -174,11 +106,9 @@ a { text-decoration: none; color: inherit; }
     width: 100%;
     padding-bottom: 27%;
     border-radius: 5px;
-    background-color: #F2EDE4;
+    background-color: #F0EBE2;
     transition: background-color var(--ease);
-    box-shadow:
-        0 4px 20px rgba(0,0,0,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.25);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.22);
 }
 .sim__mat-img {
     width: 100%;
@@ -187,7 +117,7 @@ a { text-decoration: none; color: inherit; }
     border-radius: 5px;
 }
 
-/* ── 소파 레이어 ── */
+/* 소파 */
 .sim__sofa-wrap {
     position: absolute;
     bottom: 12%;
@@ -200,24 +130,23 @@ a { text-decoration: none; color: inherit; }
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 6px 20px rgba(0,0,0,0.18));
-    transition: filter var(--ease);
+    filter: drop-shadow(0 5px 16px rgba(0,0,0,0.16));
 }
 
-/* ── 선택 배지 ── */
+/* 배지 */
 .sim__badge {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 16px;
-    padding: 12px 18px;
+    margin-top: 12px;
+    padding: 11px 16px;
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: 10px;
 }
 .sim__badge-dot {
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: var(--text-1);
     flex-shrink: 0;
@@ -225,71 +154,65 @@ a { text-decoration: none; color: inherit; }
 }
 @keyframes blink {
     0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
+    50%       { opacity: 0.25; }
 }
 .sim__badge span:last-child {
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--text-1);
     font-weight: 500;
-    letter-spacing: 0.2px;
 }
 
 /* ── 옵션 패널 ── */
 .sim__panel {
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 24px;
 }
 
-/* 스텝 */
 .sim__step-head {
     display: flex;
     align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 16px;
 }
 .sim__step-num {
     font-family: var(--serif);
-    font-size: 26px;
+    font-size: 24px;
     color: var(--text-3);
     letter-spacing: -1px;
     line-height: 1;
     flex-shrink: 0;
-    padding-top: 3px;
+    padding-top: 2px;
 }
 .sim__step-title {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
-    letter-spacing: 0.3px;
     color: var(--text-1);
 }
 .sim__step-desc {
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--text-2);
     margin-top: 3px;
 }
 
-/* 구분선 */
 .sim__rule {
     border: none;
     border-top: 1px solid var(--border);
-    margin: 0;
 }
 
-/* ── 색상 스와치 그리드 ── */
+/* ── 스와치 ── */
 .sim__swatches {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 8px;
 }
 
-/* 스와치 버튼 */
 .sw {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 10px 4px;
+    gap: 7px;
+    padding: 9px 4px;
     border-radius: 10px;
     border: 1.5px solid transparent;
     background: transparent;
@@ -299,23 +222,16 @@ a { text-decoration: none; color: inherit; }
     -webkit-tap-highlight-color: transparent;
     user-select: none;
 }
-.sw:hover {
-    background: var(--white);
-    border-color: var(--border);
-}
-.sw.is-on {
-    background: var(--white);
-    border-color: var(--text-1);
-}
+.sw:hover  { background: var(--white); border-color: var(--border); }
+.sw.is-on  { background: var(--white); border-color: var(--text-1); }
 
-/* 컬러 원 */
 .sw__dot {
     position: relative;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 1.5px solid rgba(0,0,0,0.08);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
     flex-shrink: 0;
     transition: transform var(--ease), box-shadow var(--ease);
 }
@@ -323,11 +239,10 @@ a { text-decoration: none; color: inherit; }
 .sw.is-on .sw__dot {
     transform: scale(1.05);
     box-shadow:
-        0 2px 8px rgba(0,0,0,0.12),
+        0 2px 6px rgba(0,0,0,0.12),
         0 0 0 2.5px var(--white),
         0 0 0 4.5px var(--text-1);
 }
-/* 선택 체크 */
 .sw.is-on .sw__dot::after {
     content: '✓';
     position: absolute;
@@ -335,17 +250,18 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: rgba(255,255,255,0.92);
     text-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
-/* 밝은 색상용 체크 */
-.sw.is-on .sw__dot.is-light::after { color: rgba(0,0,0,0.55); text-shadow: none; }
+.sw.is-on .sw__dot.is-light::after {
+    color: rgba(0,0,0,0.55);
+    text-shadow: none;
+}
 
-/* 컬러 이름 */
 .sw__name {
-    font-size: 10.5px;
+    font-size: 10px;
     color: var(--text-2);
     text-align: center;
     line-height: 1.3;
@@ -355,17 +271,14 @@ a { text-decoration: none; color: inherit; }
     max-width: 100%;
     transition: color var(--ease);
 }
-.sw.is-on .sw__name {
-    color: var(--text-1);
-    font-weight: 600;
-}
+.sw.is-on .sw__name { color: var(--text-1); font-weight: 600; }
 
-/* ── 현재 선택 카드 ── */
+/* 현재 선택 카드 */
 .sim__sel-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 20px;
+    padding: 16px 18px;
     background: var(--text-1);
     border-radius: 10px;
     gap: 12px;
@@ -373,164 +286,100 @@ a { text-decoration: none; color: inherit; }
 .sim__sel-label {
     font-size: 10px;
     letter-spacing: 2px;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.4);
     flex-shrink: 0;
 }
 .sim__sel-value {
     font-size: 13px;
-    color: #FFFFFF;
+    color: #fff;
     font-weight: 600;
-    letter-spacing: 0.3px;
     text-align: right;
 }
 
 /* ================================================================
-   상품 스펙 바
-   ================================================================ */
-.spec {
-    background: var(--white);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 36px 0;
-}
-.spec__inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    padding: 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-}
-.spec__item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 0 24px;
-}
-.spec__div {
-    width: 1px;
-    height: 36px;
-    background: var(--border);
-    flex-shrink: 0;
-}
-.spec__key {
-    font-size: 10px;
-    letter-spacing: 2.5px;
-    color: var(--text-3);
-}
-.spec__val {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-1);
-    letter-spacing: 0.3px;
-}
-
-/* ================================================================
-   하단 푸터 바
+   하단 푸터 바 — sticky
    ================================================================ */
 .gf {
-    background: var(--white);
-    border-top: 1px solid var(--border);
-    padding: 14px 0;
-    position: sticky;
+    position: fixed;
     bottom: 0;
-    z-index: 100;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px;
+    z-index: 200;
+
+    /* safe area for iPhone home indicator */
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
 }
 .gf__inner {
-    max-width: 1320px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 40px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-.gf__sel {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    gap: 12px;
 }
 .gf__label {
     font-size: 10px;
     letter-spacing: 2px;
     color: var(--text-3);
     flex-shrink: 0;
+    white-space: nowrap;
 }
 .gf__value {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-1);
-    letter-spacing: 0.3px;
-    transition: all 0.25s ease;
-}
-
-/* 확장용 버튼 */
-.gf__actions { display: flex; gap: 8px; }
-.gf-btn {
-    padding: 9px 18px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: var(--sans);
-    border: 1.5px solid var(--border-2);
-    background: transparent;
-    color: var(--text-1);
-    cursor: pointer;
-    letter-spacing: 0.3px;
-    transition: all var(--ease);
-}
-.gf-btn:hover { border-color: var(--text-1); }
-.gf-btn--dark {
-    background: var(--text-1);
-    border-color: var(--text-1);
-    color: #fff;
-}
-.gf-btn--dark:hover { background: #333; border-color: #333; }
-
-/* ================================================================
-   반응형 — 태블릿 (≤ 1080px)
-   ================================================================ */
-@media (max-width: 1080px) {
-    .sim { padding: 40px 28px; }
-    .sim__layout { grid-template-columns: 1fr 360px; gap: 40px; }
-    .spec__inner { padding: 0 28px; }
-    .gh__inner, .gf__inner { padding: 0 28px; }
+    transition: all 0.22s ease;
 }
 
 /* ================================================================
-   반응형 — 모바일 (≤ 800px)
+   PC 레이아웃 (≥ 760px) — 좌우 2단
    ================================================================ */
-@media (max-width: 800px) {
-    .gh__nav { display: none; }
-    .gh__inner { padding: 0 20px; }
+@media (min-width: 760px) {
+    .pt { padding: 48px 40px 40px; }
+    .pt__title { font-size: 26px; }
 
-    .pt { padding: 32px 0 28px; }
-    .pt__title { font-size: 22px; }
+    .sim { padding: 48px 40px 80px; }
+    .sim__layout {
+        flex-direction: row;       /* PC: 가로 2단 */
+        align-items: start;
+        gap: 52px;
+    }
 
-    .sim { padding: 28px 20px 40px; }
-    .sim__layout { grid-template-columns: 1fr; gap: 28px; }
-    .sim__preview { position: static; }
+    /* 미리보기 왼쪽 고정 */
+    .sim__preview {
+        flex: 1;
+        position: sticky;
+        top: 32px;
+    }
 
-    .sim__swatches { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+    /* 패널 오른쪽 고정 너비 */
+    .sim__panel {
+        width: 380px;
+        flex-shrink: 0;
+    }
 
-    .spec__inner { flex-wrap: wrap; padding: 0 20px; gap: 0; }
-    .spec__item { min-width: 50%; padding: 12px 16px; }
-    .spec__div:nth-child(4) { display: none; }
+    .sim__swatches {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 10px;
+    }
+    .sw__dot { width: 44px; height: 44px; }
+    .sw__name { font-size: 10.5px; }
+    .sim__step-num { font-size: 26px; }
+    .sim__step-title { font-size: 15px; }
+    .sim__step-desc { font-size: 11.5px; }
 
-    .gf__inner { padding: 0 20px; }
-    .gf__label { display: none; }
+    .gf { padding: 14px 40px; padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+    .gf__label { display: block; }
+    .gf__value { font-size: 14px; }
 }
 
-/* ================================================================
-   반응형 — 소형 (≤ 480px)
-   ================================================================ */
-@media (max-width: 480px) {
-    .pt__title { font-size: 19px; }
-    .sim { padding: 20px 16px 36px; }
-    .sw__dot { width: 38px; height: 38px; }
-    .sw__name { font-size: 10px; }
-    .gf__inner { padding: 0 16px; }
+/* 넓은 PC (≥ 1100px) */
+@media (min-width: 1100px) {
+    .sim { padding: 56px 60px 80px; }
+    .sim__layout { gap: 64px; }
+    .sim__panel { width: 420px; }
 }

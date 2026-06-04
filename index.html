@@ -8,24 +8,11 @@
 </head>
 <body>
 
-    <!-- ── 헤더 ── -->
-    <header class="gh">
-        <div class="gh__inner">
-            <a class="gh__logo" href="#">GANYANG</a>
-            <nav class="gh__nav">
-                <a href="#">컬렉션</a>
-                <a href="#">소재 안내</a>
-                <a href="#">구매하기</a>
-            </nav>
-        </div>
-    </header>
-
-    <!-- ── 상품 타이틀 배너 ── -->
+    <!-- ── 상품 타이틀 ── -->
     <section class="pt">
         <div class="pt__inner">
             <p class="pt__cat">SOFA FLOOR MAT</p>
             <h1 class="pt__title">나만의 조합을 찾아보세요</h1>
-            <p class="pt__spec">60 × 180 × 2 cm &nbsp;·&nbsp; Loop Pile Textile &nbsp;·&nbsp; 12 Colors</p>
         </div>
     </section>
 
@@ -36,17 +23,14 @@
             <!-- 미리보기 -->
             <div class="sim__preview">
                 <div class="sim__scene">
-                    <!-- 매트 레이어 -->
                     <div class="sim__mat-wrap">
                         <img id="matImg" class="sim__mat-img" src="" alt="바닥매트" style="display:none">
                         <div id="matShape" class="sim__mat-shape"></div>
                     </div>
-                    <!-- 소파 레이어 -->
                     <div class="sim__sofa-wrap">
                         <img id="sofaImg" class="sim__sofa-img" src="" alt="소파">
                     </div>
                 </div>
-                <!-- 선택 배지 -->
                 <div class="sim__badge">
                     <span class="sim__badge-dot"></span>
                     <span id="badgeText">아이보리 소파 + 아이보리 매트</span>
@@ -56,7 +40,6 @@
             <!-- 옵션 패널 -->
             <div class="sim__panel">
 
-                <!-- STEP 01 -->
                 <div class="sim__step">
                     <div class="sim__step-head">
                         <span class="sim__step-num">01</span>
@@ -70,7 +53,6 @@
 
                 <div class="sim__rule"></div>
 
-                <!-- STEP 02 -->
                 <div class="sim__step">
                     <div class="sim__step-head">
                         <span class="sim__step-num">02</span>
@@ -82,7 +64,6 @@
                     <div class="sim__swatches" id="matSwatches" role="radiogroup" aria-label="매트 색상"></div>
                 </div>
 
-                <!-- 현재 선택 카드 -->
                 <div class="sim__sel-card">
                     <span class="sim__sel-label">현재 선택</span>
                     <span id="selText" class="sim__sel-value">아이보리 소파 + 아이보리 매트</span>
@@ -92,38 +73,11 @@
         </div>
     </main>
 
-    <!-- ── 상품 스펙 ── -->
-    <section class="spec">
-        <div class="spec__inner">
-            <div class="spec__item">
-                <span class="spec__key">SIZE</span>
-                <span class="spec__val">60 × 180 cm</span>
-            </div>
-            <div class="spec__div"></div>
-            <div class="spec__item">
-                <span class="spec__key">THICKNESS</span>
-                <span class="spec__val">2 cm</span>
-            </div>
-            <div class="spec__div"></div>
-            <div class="spec__item">
-                <span class="spec__key">MATERIAL</span>
-                <span class="spec__val">Loop Pile Textile</span>
-            </div>
-            <div class="spec__div"></div>
-            <div class="spec__item">
-                <span class="spec__key">COLORS</span>
-                <span class="spec__val">12 Colors</span>
-            </div>
-        </div>
-    </section>
-
     <!-- ── 하단 선택 바 ── -->
     <footer class="gf">
         <div class="gf__inner">
-            <div class="gf__sel">
-                <span class="gf__label">선택된 조합</span>
-                <span id="footerText" class="gf__value">아이보리 소파 + 아이보리 매트</span>
-            </div>
+            <span class="gf__label">선택된 조합</span>
+            <span id="footerText" class="gf__value">아이보리 소파 + 아이보리 매트</span>
         </div>
     </footer>
 
