@@ -11,19 +11,12 @@
    optionCodes: 관리자 > 해당 상품 > 옵션/재고관리 탭 > 옵션코드 열
    ================================================================ */
 const CAFE24 = {
-    productNo:   0,       /* 예: 195 */
-    price:       0,       /* 예: 32000 */
-    optionCodes: {
-        'ivory':        '',
-        'cream':        '',
-        'beige':        '',
-        'olive':        '',
-        'navy':         '',
-        'charcoal':     '',
-        'terracotta':   '',
-        'dusty-rose':   '',
-        'black':        '',
-    }
+    /* 상품 페이지 URL — 카페24 관리자에서 상품 링크를 복사해 입력하세요
+       예) 'https://sensemom.com/product/detail.html?product_no=195' */
+    productUrl: '',
+
+    /* 판매가 (원, 숫자만) — 선택한 항목 금액 표시용  예) 32000 */
+    price: 0,
 };
 
 /* ================================================================
@@ -373,59 +366,32 @@ function onSwatchClick(item, type) {
 }
 
 /* ================================================================
-   12. 장바구니 / 바로구매
+   12. 상품 페이지로 이동 (장바구니 / 바로구매 공통)
    ================================================================ */
-function addToCart() { submitCafe24('cart'); }
-function buyNow()    { submitCafe24('order'); }
-
-function submitCafe24(type) {
+function goToProduct(type) {
     if (cartItems.length === 0) {
         showToast('매트 색상을 선택해주세요.');
         return;
     }
-    if (!CAFE24.productNo) {
-        showToast('simulator.js의 CAFE24.productNo를 입력해주세요.');
+
+    if (!CAFE24.productUrl) {
+        showToast('simulator.js의 CAFE24.productUrl을 입력해주세요.');
         return;
     }
 
-    /* 옵션코드 미설정 항목 확인 */
-    const missing = cartItems.filter(i => !CAFE24.optionCodes[i.mat.id]);
-    if (missing.length) {
-        showToast(`"${missing[0].mat.name}" 옵션코드를 입력해주세요.`);
-        return;
-    }
+    /* 선택한 색상 이름을 URL 파라미터로 전달 (참고용) */
+    const colors = cartItems.map(i => i.mat.name).join(',');
+    const url    = CAFE24.productUrl
+        + (CAFE24.productUrl.includes('?') ? '&' : '?')
+        + 'selected_colors=' + encodeURIComponent(colors);
 
-    const action = type === 'cart'
-        ? '/exec/front/order/basket/'
-        : '/exec/front/order/order/';
-
-    const isCafe24 = /cafe24\.(com|net)/.test(window.location.hostname)
-                  || /sensemom\.com/.test(window.location.hostname);
-
-    if (isCafe24) {
-        /* 카페24 다중 옵션 배열 폼 제출 */
-        const form = Object.assign(document.createElement('form'), {
-            method: 'post', action, style: 'display:none'
-        });
-        cartItems.forEach(({ mat, qty }, idx) => {
-            [
-                [`product_no[${idx}]`,  CAFE24.productNo],
-                [`option_code[${idx}]`, CAFE24.optionCodes[mat.id]],
-                [`quantity[${idx}]`,    qty],
-                [`basketType[${idx}]`,  type === 'cart' ? 'cart' : 'direct'],
-            ].forEach(([n, v]) => {
-                const el = document.createElement('input');
-                Object.assign(el, { type: 'hidden', name: n, value: v });
-                form.appendChild(el);
-            });
-        });
-        document.body.appendChild(form);
-        form.submit();
+    if (type === 'cart') {
+        /* 장바구니: 새 탭으로 상품 페이지 열기 */
+        window.open(url, '_blank');
+        showToast('상품 페이지에서 장바구니에 담아주세요 ✓');
     } else {
-        /* 미리보기 환경 */
-        const summary = cartItems.map(i => `${i.mat.name} ${i.qty}개`).join(', ');
-        const label   = type === 'cart' ? '장바구니에 담겼습니다' : '구매 페이지로 이동합니다';
-        showToast(`${summary} — ${label}`);
+        /* 바로 구매: 현재 탭에서 상품 페이지로 이동 */
+        window.location.href = url;
     }
 }
 
@@ -498,7 +464,20 @@ function renderSwatches(container, items, type) {
 }
 
 /* ================================================================
-   15. 초기화
+   15. 상세 섹션 — 컬러 팔레트 자동 렌더링
+   ================================================================ */
+function renderDetailColors() {
+    const container = document.getElementById('dtlColors');
+    if (!container) return;
+    container.innerHTML = MATS.map(m => `
+        <div class="dtl__color-item">
+            <span class="dtl__color-dot" style="background:${m.color}"></span>
+            <span class="dtl__color-name">${m.name}</span>
+        </div>`).join('');
+}
+
+/* ================================================================
+   16. 초기화
    ================================================================ */
 function init() {
     renderSwatches(sofaSwEl, SOFAS, 'sofa');
@@ -506,9 +485,10 @@ function init() {
     setActive(sofaSwEl, state.sofa.id);
 
     updateSofaVisual(state.sofa);
-    updateMatVisual(null);  /* 매트 미선택 상태로 시작 */
+    updateMatVisual(null);
     renderOptBox();
     updateBadge();
+    renderDetailColors();
 }
 
 document.addEventListener('DOMContentLoaded', init);
