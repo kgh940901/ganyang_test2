@@ -335,10 +335,10 @@ function removeItem(matId) {
 /* ================================================================
    11. 드롭다운 — 열기/닫기
    ================================================================ */
-function toggleDrop(id) {
+function toggleDrop(e, id) {
+    e.stopPropagation();   /* document 핸들러가 즉시 닫지 못하도록 */
     const el = document.getElementById(id);
     const isOpen = el.classList.contains('is-open');
-    /* 다른 드롭다운 모두 닫기 */
     document.querySelectorAll('.dropdown.is-open').forEach(d => d.classList.remove('is-open'));
     if (!isOpen) el.classList.add('is-open');
 }
