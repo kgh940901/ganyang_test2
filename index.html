@@ -3,189 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>소파 & 바닥매트 매칭 시뮬레이터</title>
+    <title>소파 바닥매트 — GANYANG</title>
     <link rel="stylesheet" href="css/simulator.css">
 </head>
 <body>
 
-    <!-- ============================
-         헤더
-    ============================= -->
-    <header class="sim-header">
-        <div class="sim-header__inner">
-            <div class="sim-header__brand">
-                <span class="sim-header__logo">◈</span>
-                <span class="sim-header__brand-name">LIVING MATCH</span>
-            </div>
-            <div class="sim-header__title-wrap">
-                <h1 class="sim-header__title">소파 &amp; 바닥매트 매칭 시뮬레이터</h1>
-                <p class="sim-header__subtitle">색상을 선택하여 나만의 조합을 찾아보세요</p>
-            </div>
+    <!-- ── 헤더 ── -->
+    <header class="gh">
+        <div class="gh__inner">
+            <a class="gh__logo" href="#">GANYANG</a>
+            <nav class="gh__nav">
+                <a href="#">컬렉션</a>
+                <a href="#">소재 안내</a>
+                <a href="#">구매하기</a>
+            </nav>
         </div>
     </header>
 
-    <!-- ============================
-         메인 콘텐츠
-    ============================= -->
-    <main class="sim-main">
-        <div class="sim-layout">
+    <!-- ── 상품 타이틀 배너 ── -->
+    <section class="pt">
+        <div class="pt__inner">
+            <p class="pt__cat">SOFA FLOOR MAT</p>
+            <h1 class="pt__title">나만의 조합을 찾아보세요</h1>
+            <p class="pt__spec">60 × 180 × 2 cm &nbsp;·&nbsp; Loop Pile Textile &nbsp;·&nbsp; 12 Colors</p>
+        </div>
+    </section>
 
-            <!-- ── 미리보기 영역 (좌) ── -->
-            <section class="sim-preview" aria-label="미리보기 영역">
+    <!-- ── 시뮬레이터 ── -->
+    <main class="sim">
+        <div class="sim__layout">
 
-                <!-- 룸 씬 -->
-                <div class="sim-scene">
-
-                    <!-- 바닥매트 레이어 (소파 뒤/아래) -->
-                    <div class="sim-scene__mat-layer">
-                        <!--
-                            실제 이미지 사용 방법:
-                            assets/mats/ 폴더에 이미지 파일을 추가하고
-                            simulator.js의 MATS 배열에서 image 항목의 주석을 해제하세요.
-                        -->
-                        <img
-                            id="matImage"
-                            class="sim-scene__mat-img"
-                            src=""
-                            alt="바닥매트"
-                            style="display:none"
-                        >
-                        <!-- 이미지 없을 때 대체 색상 표시 -->
-                        <div id="matShape" class="sim-scene__mat-shape"></div>
+            <!-- 미리보기 -->
+            <div class="sim__preview">
+                <div class="sim__scene">
+                    <!-- 매트 레이어 -->
+                    <div class="sim__mat-wrap">
+                        <img id="matImg" class="sim__mat-img" src="" alt="바닥매트" style="display:none">
+                        <div id="matShape" class="sim__mat-shape"></div>
                     </div>
-
-                    <!-- 소파 레이어 (매트 위) -->
-                    <div class="sim-scene__sofa-layer">
-                        <!--
-                            실제 이미지 사용 방법:
-                            assets/sofas/ 폴더에 이미지 파일을 추가하고
-                            simulator.js의 SOFAS 배열에서 image 항목의 주석을 해제하세요.
-                        -->
-                        <img
-                            id="sofaImage"
-                            class="sim-scene__sofa-img"
-                            src=""
-                            alt="소파"
-                            style="display:none"
-                        >
-                        <!-- 이미지 없을 때 SVG 대체 표시 -->
-                        <!--
-                            SVG 그라데이션 ID 참조:
-                            sofaBodyGrad  → 등받이·방석 그라데이션
-                            sofaArmGrad   → 팔걸이 그라데이션
-                        -->
-                        <svg
-                            id="sofaShape"
-                            class="sim-scene__sofa-svg"
-                            viewBox="0 0 520 225"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                        >
-                            <defs>
-                                <!-- 등받이·방석용 그라데이션 -->
-                                <linearGradient id="sofaBodyGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop id="bodyStop1" offset="0%"   stop-color="#F2EDE4"/>
-                                    <stop id="bodyStop2" offset="100%" stop-color="#D8D0C4"/>
-                                </linearGradient>
-                                <!-- 팔걸이용 그라데이션 (본체보다 어둡게) -->
-                                <linearGradient id="sofaArmGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop id="armStop1" offset="0%"   stop-color="#D8D0C4"/>
-                                    <stop id="armStop2" offset="100%" stop-color="#B8B0A4"/>
-                                </linearGradient>
-                                <!-- 다리용 고정 색상 -->
-                            </defs>
-
-                            <!-- 등받이 -->
-                            <rect class="sofa-back" x="44" y="18" width="432" height="118" rx="14" fill="url(#sofaBodyGrad)"/>
-
-                            <!-- 왼쪽 방석 -->
-                            <rect class="sofa-seat" x="44" y="140" width="210" height="68" rx="8" fill="url(#sofaBodyGrad)"/>
-                            <!-- 오른쪽 방석 -->
-                            <rect class="sofa-seat" x="266" y="140" width="210" height="68" rx="8" fill="url(#sofaBodyGrad)"/>
-
-                            <!-- 왼쪽 팔걸이 -->
-                            <rect class="sofa-arm" x="0" y="74" width="52" height="134" rx="10" fill="url(#sofaArmGrad)"/>
-                            <!-- 오른쪽 팔걸이 -->
-                            <rect class="sofa-arm" x="468" y="74" width="52" height="134" rx="10" fill="url(#sofaArmGrad)"/>
-
-                            <!-- 방석 구분선 (미묘한 틈) -->
-                            <rect x="248" y="140" width="18" height="68" fill="rgba(0,0,0,0.12)" rx="2"/>
-
-                            <!-- 다리 -->
-                            <rect class="sofa-leg" x="58" y="200" width="16" height="22" rx="3" fill="#1a1512"/>
-                            <rect class="sofa-leg" x="446" y="200" width="16" height="22" rx="3" fill="#1a1512"/>
-                        </svg>
+                    <!-- 소파 레이어 -->
+                    <div class="sim__sofa-wrap">
+                        <img id="sofaImg" class="sim__sofa-img" src="" alt="소파">
                     </div>
-
                 </div>
-                <!-- /sim-scene -->
-
-                <!-- 현재 선택 라벨 -->
-                <div class="sim-preview__info">
-                    <span class="sim-preview__info-dot"></span>
-                    <span id="previewLabel" class="sim-preview__info-text">아이보리 소파 + 아이보리 매트</span>
+                <!-- 선택 배지 -->
+                <div class="sim__badge">
+                    <span class="sim__badge-dot"></span>
+                    <span id="badgeText">아이보리 소파 + 아이보리 매트</span>
                 </div>
+            </div>
 
-            </section>
-            <!-- /sim-preview -->
+            <!-- 옵션 패널 -->
+            <div class="sim__panel">
 
-            <!-- ── 선택 패널 (우) ── -->
-            <aside class="sim-panel">
-
-                <!-- STEP 01 소파 색상 선택 -->
-                <div class="sim-step">
-                    <div class="sim-step__head">
-                        <div class="sim-step__num">01</div>
-                        <div class="sim-step__info">
-                            <h2 class="sim-step__title">소파 색상</h2>
-                            <p class="sim-step__desc">내 집 소파와 가장 가까운 색상을 선택하세요</p>
+                <!-- STEP 01 -->
+                <div class="sim__step">
+                    <div class="sim__step-head">
+                        <span class="sim__step-num">01</span>
+                        <div>
+                            <h2 class="sim__step-title">소파 색상</h2>
+                            <p class="sim__step-desc">내 소파와 가장 가까운 색상을 선택하세요</p>
                         </div>
                     </div>
-                    <!-- 옵션은 simulator.js에서 동적으로 생성됩니다 -->
-                    <div class="sim-options" id="sofaOptions" role="radiogroup" aria-label="소파 색상 선택"></div>
+                    <div class="sim__swatches" id="sofaSwatches" role="radiogroup" aria-label="소파 색상"></div>
                 </div>
 
-                <hr class="sim-divider">
+                <div class="sim__rule"></div>
 
-                <!-- STEP 02 매트 색상 선택 -->
-                <div class="sim-step">
-                    <div class="sim-step__head">
-                        <div class="sim-step__num">02</div>
-                        <div class="sim-step__info">
-                            <h2 class="sim-step__title">바닥매트 색상</h2>
-                            <p class="sim-step__desc">원하시는 매트 색상을 선택하세요</p>
+                <!-- STEP 02 -->
+                <div class="sim__step">
+                    <div class="sim__step-head">
+                        <span class="sim__step-num">02</span>
+                        <div>
+                            <h2 class="sim__step-title">매트 색상</h2>
+                            <p class="sim__step-desc">원하는 매트 색상을 선택하세요</p>
                         </div>
                     </div>
-                    <!-- 옵션은 simulator.js에서 동적으로 생성됩니다 -->
-                    <div class="sim-options" id="matOptions" role="radiogroup" aria-label="바닥매트 색상 선택"></div>
+                    <div class="sim__swatches" id="matSwatches" role="radiogroup" aria-label="매트 색상"></div>
                 </div>
 
-            </aside>
-            <!-- /sim-panel -->
+                <!-- 현재 선택 카드 -->
+                <div class="sim__sel-card">
+                    <span class="sim__sel-label">현재 선택</span>
+                    <span id="selText" class="sim__sel-value">아이보리 소파 + 아이보리 매트</span>
+                </div>
 
+            </div>
         </div>
     </main>
 
-    <!-- ============================
-         하단 선택 바 (푸터)
-    ============================= -->
-    <footer class="sim-footer">
-        <div class="sim-footer__inner">
-            <div class="sim-footer__left">
-                <span class="sim-footer__label">현재 선택</span>
-                <span id="footerLabel" class="sim-footer__value">아이보리 소파 + 아이보리 매트</span>
+    <!-- ── 상품 스펙 ── -->
+    <section class="spec">
+        <div class="spec__inner">
+            <div class="spec__item">
+                <span class="spec__key">SIZE</span>
+                <span class="spec__val">60 × 180 cm</span>
             </div>
-
-            <!--
-                추후 확장: 저장 / 다운로드 / 공유 버튼
-                simulator.js 하단의 확장 함수 주석을 참고하세요.
-
-            <div class="sim-footer__actions">
-                <button class="sim-btn" onclick="saveSelection()">저장</button>
-                <button class="sim-btn" onclick="shareURL()">URL 공유</button>
-                <button class="sim-btn sim-btn--primary" onclick="downloadImage()">이미지 저장</button>
+            <div class="spec__div"></div>
+            <div class="spec__item">
+                <span class="spec__key">THICKNESS</span>
+                <span class="spec__val">2 cm</span>
             </div>
-            -->
+            <div class="spec__div"></div>
+            <div class="spec__item">
+                <span class="spec__key">MATERIAL</span>
+                <span class="spec__val">Loop Pile Textile</span>
+            </div>
+            <div class="spec__div"></div>
+            <div class="spec__item">
+                <span class="spec__key">COLORS</span>
+                <span class="spec__val">12 Colors</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── 하단 선택 바 ── -->
+    <footer class="gf">
+        <div class="gf__inner">
+            <div class="gf__sel">
+                <span class="gf__label">선택된 조합</span>
+                <span id="footerText" class="gf__value">아이보리 소파 + 아이보리 매트</span>
+            </div>
         </div>
     </footer>
 

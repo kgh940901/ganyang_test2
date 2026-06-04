@@ -1,412 +1,353 @@
-/* ============================================================
-   SIMULATOR.JS  —  소파 & 바닥매트 매칭 시뮬레이터
-   ============================================================ */
+/* ================================================================
+   SIMULATOR.JS — GANYANG 소파 바닥매트 매칭 시뮬레이터
+   ================================================================ */
 
-/* ============================================================
+/* ================================================================
    1. 데이터 설정
-   색상/이름 추가·수정 시 이 영역만 변경하세요.
+   색상 추가·수정은 이 영역만 변경하세요.
 
-   ★ 이미지 교체 방법:
-     1) assets/sofas/ 폴더에 소파 이미지를 저장합니다.
-        권장 형식: 배경이 투명한 PNG (소파만 단독 촬영)
-        파일명 예시: ivory.png, beige.png, dark-gray.png ...
-     2) 아래 image 경로가 이미 활성화되어 있습니다.
-        파일을 폴더에 넣기만 하면 자동으로 표시됩니다.
-     3) 이미지 파일이 없으면 자동으로 SVG 색상으로 대체됩니다.
+   ★ 실제 상품 이미지 사용법:
+      image: 'assets/sofas/ivory.png' 처럼 경로를 추가하면
+      해당 이미지를 우선 표시합니다.
+      이미지 파일이 없거나 로드 실패 시 자동으로 SVG로 대체됩니다.
+   ================================================================ */
 
-   ★ 배경 있는 사진(JPEG 등) 사용 시:
-        index.html의 .sim-scene 배경색을
-        사진 배경색과 동일하게 맞추면 자연스럽게 보입니다.
-   ============================================================ */
-
-/** 소파 색상 목록 */
 const SOFAS = [
-    {
-        id: 'ivory',
-        name: '아이보리',
-        color: '#F2EDE4',
-        image: 'assets/sofas/ivory.png',
-    },
-    {
-        id: 'cream',
-        name: '크림',
-        color: '#E5DEC8',
-        image: 'assets/sofas/cream.png',
-    },
-    {
-        id: 'beige',
-        name: '베이지',
-        color: '#C8A882',
-        image: 'assets/sofas/beige.png',
-    },
-    {
-        id: 'light-gray',
-        name: '라이트 그레이',
-        color: '#B8B4B0',
-        image: 'assets/sofas/light-gray.png',
-    },
-    {
-        id: 'dark-gray',
-        name: '다크 그레이',
-        color: '#6A6866',
-        image: 'assets/sofas/dark-gray.png',
-    },
-    {
-        id: 'navy',
-        name: '네이비',
-        color: '#1E2D4A',
-        image: 'assets/sofas/navy.png',
-    },
-    {
-        id: 'black',
-        name: '블랙',
-        color: '#1C1C1C',
-        image: 'assets/sofas/black.png',
-    },
+    { id: 'ivory',      name: '아이보리',      color: '#F0EBE2' },
+    { id: 'cream',      name: '크림',           color: '#E6DFC8' },
+    { id: 'beige',      name: '베이지',         color: '#C9A882' },
+    { id: 'light-gray', name: '라이트 그레이',  color: '#BAB6B2' },
+    { id: 'dark-gray',  name: '다크 그레이',    color: '#6E6C68' },
+    { id: 'navy',       name: '네이비',         color: '#283A52' },
+    { id: 'black',      name: '블랙',           color: '#2A2A2A' },
 ];
 
-/** 바닥매트 색상 목록 */
 const MATS = [
-    {
-        id: 'ivory',
-        name: '아이보리',
-        color: '#F2EDE4',
-        image: 'assets/mats/ivory.png',
-    },
-    {
-        id: 'cream',
-        name: '크림',
-        color: '#E5DEC8',
-        image: 'assets/mats/cream.png',
-    },
-    {
-        id: 'beige',
-        name: '베이지',
-        color: '#C8A882',
-        image: 'assets/mats/beige.png',
-    },
-    {
-        id: 'olive',
-        name: '올리브',
-        color: '#6B7645',
-        image: 'assets/mats/olive.png',
-    },
-    {
-        id: 'navy',
-        name: '네이비',
-        color: '#1E2D4A',
-        image: 'assets/mats/navy.png',
-    },
-    {
-        id: 'charcoal',
-        name: '차콜',
-        color: '#4A4848',
-        image: 'assets/mats/charcoal.png',
-    },
-    {
-        id: 'terracotta',
-        name: '테라코타',
-        color: '#C4613A',
-        image: 'assets/mats/terracotta.png',
-    },
-    {
-        id: 'dusty-rose',
-        name: '더스티 로즈',
-        color: '#D4848A',
-        image: 'assets/mats/dusty-rose.png',
-    },
-    {
-        id: 'black',
-        name: '블랙',
-        color: '#1C1C1C',
-        image: 'assets/mats/black.png',
-    },
+    { id: 'ivory',      name: '아이보리',       color: '#F0EBE2' },
+    { id: 'cream',      name: '크림',           color: '#E6DFC8' },
+    { id: 'beige',      name: '베이지',         color: '#C9A882' },
+    { id: 'olive',      name: '올리브',         color: '#7A8452' },
+    { id: 'navy',       name: '네이비',         color: '#283A52' },
+    { id: 'charcoal',   name: '차콜',           color: '#4E4C48' },
+    { id: 'terracotta', name: '테라코타',       color: '#C86040' },
+    { id: 'dusty-rose', name: '더스티 로즈',    color: '#D8949A' },
+    { id: 'black',      name: '블랙',           color: '#2A2A2A' },
 ];
 
-/* ============================================================
-   2. 상태 관리
-   ============================================================ */
+/* ================================================================
+   2. 상태
+   ================================================================ */
+const state = { sofa: SOFAS[0], mat: MATS[0] };
 
-/** 현재 선택된 소파/매트 */
-const state = {
-    sofa: SOFAS[0],
-    mat:  MATS[0],
-};
-
-/* ============================================================
+/* ================================================================
    3. DOM 참조
-   ============================================================ */
-const sofaOptionsEl  = document.getElementById('sofaOptions');
-const matOptionsEl   = document.getElementById('matOptions');
-const sofaShapeEl    = document.getElementById('sofaShape');
-const sofaImageEl    = document.getElementById('sofaImage');
-const matShapeEl     = document.getElementById('matShape');
-const matImageEl     = document.getElementById('matImage');
-const previewLabelEl = document.getElementById('previewLabel');
-const footerLabelEl  = document.getElementById('footerLabel');
+   ================================================================ */
+const sofaImg     = document.getElementById('sofaImg');
+const matImg      = document.getElementById('matImg');
+const matShape    = document.getElementById('matShape');
+const sofaSwEl    = document.getElementById('sofaSwatches');
+const matSwEl     = document.getElementById('matSwatches');
+const badgeTextEl = document.getElementById('badgeText');
+const selTextEl   = document.getElementById('selText');
+const footerEl    = document.getElementById('footerText');
 
-/* ============================================================
-   4. 렌더링 — 옵션 버튼 생성
-   ============================================================ */
+/* ================================================================
+   4. SVG 생성 — 소파
+   실제 이미지 파일이 없을 때 이 SVG가 대신 표시됩니다.
+   ================================================================ */
+function buildSofaSVG(hex) {
+    const hi   = shade(hex, +20);   /* 최상단 하이라이트 */
+    const base = hex;
+    const sh   = shade(hex, -18);   /* 하단 그림자 */
+    const arm  = shade(hex, -12);   /* 팔걸이 베이스 */
+    const armS = shade(hex, -30);   /* 팔걸이 하단 */
+    const leg  = shade(hex, -45);   /* 다리 */
 
-/** 소파 옵션 버튼을 DOM에 렌더링 */
-function renderSofaOptions() {
-    sofaOptionsEl.innerHTML = '';
-    SOFAS.forEach(item => {
-        sofaOptionsEl.appendChild(createOptionBtn(item, 'sofa'));
+    /* ViewBox 720 × 400
+       - 등받이: y=38, h=200, 라운드 18
+       - 팔걸이: w=74, h=222
+       - 방석 3개: y=236, h=108
+       - 다리 3개: y=338, h=48          */
+    return `<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 등받이·방석 그라데이션 -->
+    <linearGradient id="G1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="${hi}"/>
+      <stop offset="40%"  stop-color="${base}"/>
+      <stop offset="100%" stop-color="${sh}"/>
+    </linearGradient>
+    <!-- 방석 그라데이션 (조금 더 어둠) -->
+    <linearGradient id="G2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="${base}"/>
+      <stop offset="100%" stop-color="${sh}"/>
+    </linearGradient>
+    <!-- 팔걸이 그라데이션 -->
+    <linearGradient id="G3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="${arm}"/>
+      <stop offset="100%" stop-color="${armS}"/>
+    </linearGradient>
+    <!-- 바닥 그림자 -->
+    <radialGradient id="SH" cx="50%" cy="50%">
+      <stop offset="0%"   stop-color="rgba(0,0,0,0.20)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 바닥 그림자 -->
+  <ellipse cx="360" cy="390" rx="298" ry="12" fill="url(#SH)"/>
+
+  <!-- 뒷 다리 (살짝 보임) -->
+  <rect x="114" y="304" width="20" height="58" rx="4" fill="${leg}" opacity="0.55"/>
+  <rect x="586" y="304" width="20" height="58" rx="4" fill="${leg}" opacity="0.55"/>
+
+  <!-- 등받이 본체 -->
+  <rect x="52" y="38" width="616" height="202" rx="18" fill="url(#G1)"/>
+
+  <!-- 등받이 쿠션 구분선 (3구역) -->
+  <rect x="254" y="52" width="3" height="178" rx="2" fill="rgba(0,0,0,0.07)"/>
+  <rect x="463" y="52" width="3" height="178" rx="2" fill="rgba(0,0,0,0.07)"/>
+
+  <!-- 등받이 상단 하이라이트 -->
+  <rect x="52" y="38" width="616" height="30" rx="18" fill="rgba(255,255,255,0.20)"/>
+
+  <!-- 팔걸이 왼쪽 -->
+  <rect x="2"  y="102" width="74" height="222" rx="14" fill="url(#G3)"/>
+  <rect x="2"  y="102" width="74" height="32"  rx="14" fill="rgba(255,255,255,0.16)"/>
+
+  <!-- 팔걸이 오른쪽 -->
+  <rect x="644" y="102" width="74" height="222" rx="14" fill="url(#G3)"/>
+  <rect x="644" y="102" width="74" height="32"  rx="14" fill="rgba(255,255,255,0.16)"/>
+
+  <!-- 시트 플랫폼 (방석 아래 받침) -->
+  <rect x="52" y="234" width="616" height="14" rx="4" fill="${sh}"/>
+
+  <!-- 방석 왼쪽 -->
+  <rect x="58"  y="238" width="195" height="108" rx="11" fill="url(#G2)"/>
+  <!-- 방석 가운데 -->
+  <rect x="263" y="238" width="194" height="108" rx="11" fill="url(#G2)"/>
+  <!-- 방석 오른쪽 -->
+  <rect x="467" y="238" width="195" height="108" rx="11" fill="url(#G2)"/>
+
+  <!-- 방석 사이 틈 -->
+  <rect x="253" y="244" width="10" height="96" rx="3" fill="rgba(0,0,0,0.08)"/>
+  <rect x="457" y="244" width="10" height="96" rx="3" fill="rgba(0,0,0,0.08)"/>
+
+  <!-- 방석 상단 하이라이트 -->
+  <rect x="58"  y="238" width="195" height="20" rx="11" fill="rgba(255,255,255,0.20)"/>
+  <rect x="263" y="238" width="194" height="20" rx="11" fill="rgba(255,255,255,0.20)"/>
+  <rect x="467" y="238" width="195" height="20" rx="11" fill="rgba(255,255,255,0.20)"/>
+
+  <!-- 앞 다리 -->
+  <rect x="114" y="338" width="22" height="48" rx="5" fill="${leg}"/>
+  <rect x="349" y="338" width="22" height="48" rx="5" fill="${leg}"/>
+  <rect x="584" y="338" width="22" height="48" rx="5" fill="${leg}"/>
+</svg>`;
+}
+
+/* ================================================================
+   5. SVG 생성 — 바닥매트
+   ================================================================ */
+function buildMatSVG(hex) {
+    const hi = shade(hex, +24);
+    const sh = shade(hex, -20);
+
+    /* ViewBox 580 × 165
+       - 매트 본체: y=8, h=142, rx=7
+       - 위쪽 하이라이트 엣지
+       - 미세 텍스처(수평 라인 패턴)
+       - 바닥 그림자               */
+    return `<svg viewBox="0 0 580 165" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="MG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="${hi}"/>
+      <stop offset="28%"  stop-color="${hex}"/>
+      <stop offset="100%" stop-color="${sh}"/>
+    </linearGradient>
+    <!-- 루프 파일 직물 느낌 텍스처 -->
+    <pattern id="TX" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="2" x2="4" y2="2" stroke="rgba(255,255,255,0.07)" stroke-width="0.9"/>
+    </pattern>
+    <radialGradient id="MSH" cx="50%" cy="100%">
+      <stop offset="0%"   stop-color="rgba(0,0,0,0.18)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 바닥 그림자 -->
+  <ellipse cx="290" cy="158" rx="270" ry="9" fill="url(#MSH)"/>
+
+  <!-- 매트 본체 -->
+  <rect x="6" y="8" width="568" height="142" rx="7" fill="url(#MG)"/>
+
+  <!-- 텍스처 오버레이 -->
+  <rect x="6" y="8" width="568" height="142" rx="7" fill="url(#TX)"/>
+
+  <!-- 상단 하이라이트 엣지 -->
+  <rect x="6" y="8" width="568" height="6" rx="4" fill="rgba(255,255,255,0.26)"/>
+
+  <!-- 하단 그림자 영역 -->
+  <rect x="6" y="122" width="568" height="28" rx="7" fill="rgba(0,0,0,0.07)"/>
+</svg>`;
+}
+
+/* ================================================================
+   6. SVG → data URI 변환 후 img.src에 적용
+   ================================================================ */
+function svgToDataURI(svgStr) {
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
+}
+
+/* ================================================================
+   7. 미리보기 업데이트
+   ================================================================ */
+function updateSofa(sofa) {
+    if (sofa.image) {
+        /* 실제 이미지 경로가 있으면 우선 시도 */
+        sofaImg.onerror = () => { sofaImg.src = svgToDataURI(buildSofaSVG(sofa.color)); };
+        sofaImg.src = sofa.image;
+    } else {
+        sofaImg.onerror = null;
+        sofaImg.src = svgToDataURI(buildSofaSVG(sofa.color));
+    }
+}
+
+function updateMat(mat) {
+    if (mat.image) {
+        matImg.onerror = () => {
+            matImg.style.display = 'none';
+            matShape.style.display = 'block';
+            matShape.style.backgroundColor = mat.color;
+        };
+        matImg.src = mat.image;
+        matImg.style.display = 'block';
+        matShape.style.display = 'none';
+    } else {
+        /* 이미지 없음 → 동적 SVG 사용 */
+        matImg.onerror = null;
+        matImg.src = svgToDataURI(buildMatSVG(mat.color));
+        matImg.style.display = 'block';
+        matShape.style.display = 'none';
+    }
+}
+
+function updateLabel() {
+    const text = `${state.sofa.name} 소파 + ${state.mat.name} 매트`;
+    badgeTextEl.textContent = text;
+    selTextEl.textContent   = text;
+    footerEl.textContent    = text;
+}
+
+/* ================================================================
+   8. 스와치 렌더링
+   ================================================================ */
+function renderSwatches(container, items, type) {
+    container.innerHTML = '';
+    items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'sw';
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', 'false');
+        btn.setAttribute('aria-label', item.name);
+        btn.dataset.id   = item.id;
+        btn.dataset.type = type;
+
+        /* 밝은 색상 판별 (체크 아이콘 색상 반전용) */
+        const isLight = isLightColor(item.color);
+
+        const dot = document.createElement('span');
+        dot.className = 'sw__dot' + (isLight ? ' is-light' : '');
+        dot.style.backgroundColor = item.color;
+
+        const name = document.createElement('span');
+        name.className = 'sw__name';
+        name.textContent = item.name;
+
+        btn.appendChild(dot);
+        btn.appendChild(name);
+        btn.addEventListener('click', () => onSwatchClick(item, type));
+        container.appendChild(btn);
     });
 }
 
-/** 매트 옵션 버튼을 DOM에 렌더링 */
-function renderMatOptions() {
-    matOptionsEl.innerHTML = '';
-    MATS.forEach(item => {
-        matOptionsEl.appendChild(createOptionBtn(item, 'mat'));
-    });
-}
-
-/**
- * 색상 선택 버튼 엘리먼트 생성
- * @param {Object} item  { id, name, color, image? }
- * @param {string} type  'sofa' | 'mat'
- * @returns {HTMLButtonElement}
- */
-function createOptionBtn(item, type) {
-    const btn = document.createElement('button');
-    btn.className = 'sim-option';
-    btn.setAttribute('role', 'radio');
-    btn.setAttribute('aria-checked', 'false');
-    btn.setAttribute('aria-label', item.name);
-    btn.dataset.id   = item.id;
-    btn.dataset.type = type;
-
-    /* 색상 스와치 원 */
-    const swatch = document.createElement('span');
-    swatch.className = 'sim-option__swatch';
-    swatch.style.backgroundColor = item.color;
-
-    /* 색상 이름 */
-    const label = document.createElement('span');
-    label.className = 'sim-option__label';
-    label.textContent = item.name;
-
-    btn.appendChild(swatch);
-    btn.appendChild(label);
-    btn.addEventListener('click', () => onOptionClick(item, type));
-
-    return btn;
-}
-
-/* ============================================================
-   5. 이벤트 처리
-   ============================================================ */
-
-/**
- * 옵션 클릭 시 상태 갱신 → 미리보기 업데이트
- * @param {Object} item
- * @param {string} type  'sofa' | 'mat'
- */
-function onOptionClick(item, type) {
+/* ================================================================
+   9. 클릭 처리
+   ================================================================ */
+function onSwatchClick(item, type) {
     if (type === 'sofa') {
         state.sofa = item;
-        setActiveClass(sofaOptionsEl, item.id);
+        setActive(sofaSwEl, item.id);
+        updateSofa(item);
     } else {
         state.mat = item;
-        setActiveClass(matOptionsEl, item.id);
+        setActive(matSwEl, item.id);
+        updateMat(item);
     }
-    updatePreview();
     updateLabel();
 }
 
-/* ============================================================
-   6. 미리보기 업데이트
-   ============================================================ */
-
-/** 소파 + 매트 미리보기 갱신 */
-function updatePreview() {
-    updateSofaVisual(state.sofa);
-    updateMatVisual(state.mat);
-}
+/* ================================================================
+   10. 유틸리티
+   ================================================================ */
 
 /**
- * 소파 비주얼 갱신
- * — 이미지가 있으면 <img> 표시, 없으면 SVG 그라데이션으로 대체
+ * 선택된 스와치에 .is-on 클래스 토글
  */
-function updateSofaVisual(sofa) {
-    if (sofa.image) {
-        sofaImageEl.src = sofa.image;
-
-        sofaImageEl.onload = () => {
-            sofaImageEl.style.display = 'block';
-            sofaShapeEl.style.display = 'none';
-        };
-
-        /* 이미지 로드 실패 → SVG 폴백 */
-        sofaImageEl.onerror = () => {
-            sofaImageEl.style.display = 'none';
-            sofaShapeEl.style.display = 'block';
-            applySofaSvgColor(sofa.color);
-        };
-    } else {
-        sofaImageEl.style.display = 'none';
-        sofaShapeEl.style.display = 'block';
-        applySofaSvgColor(sofa.color);
-    }
-}
-
-/**
- * 매트 비주얼 갱신
- * — 이미지가 있으면 <img> 표시, 없으면 색상 div로 대체
- */
-function updateMatVisual(mat) {
-    if (mat.image) {
-        matImageEl.src = mat.image;
-
-        matImageEl.onload = () => {
-            matImageEl.style.display = 'block';
-            matShapeEl.style.display = 'none';
-        };
-
-        /* 이미지 로드 실패 → 색상 div 폴백 */
-        matImageEl.onerror = () => {
-            matImageEl.style.display = 'none';
-            matShapeEl.style.display = 'block';
-            applyMatColor(mat.color);
-        };
-    } else {
-        matImageEl.style.display = 'none';
-        matShapeEl.style.display = 'block';
-        applyMatColor(mat.color);
-    }
-}
-
-/**
- * SVG 소파의 그라데이션 색상 변경
- * bodyStop1/2 → 등받이·방석 그라데이션
- * armStop1/2  → 팔걸이 그라데이션
- */
-function applySofaSvgColor(hex) {
-    const lighter = shadeColor(hex, +18);  /* 하이라이트 */
-    const base    = hex;
-    const darker  = shadeColor(hex, -18);  /* 아래쪽 그림자 */
-    const darkest = shadeColor(hex, -32);  /* 팔걸이 하단 */
-
-    /* CSS stop-color 속성으로 직접 설정 (IE 미지원, 모던 브라우저 OK) */
-    setStopColor('bodyStop1', lighter);
-    setStopColor('bodyStop2', darker);
-    setStopColor('armStop1',  darker);
-    setStopColor('armStop2',  darkest);
-}
-
-/**
- * 매트 색상 div 색상 변경 + 상단 하이라이트 효과
- */
-function applyMatColor(hex) {
-    const highlight = shadeColor(hex, +22);
-    matShapeEl.style.backgroundColor = hex;
-    matShapeEl.style.boxShadow =
-        `0 6px 24px rgba(0,0,0,0.45), inset 0 2px 0 ${highlight}`;
-}
-
-/* ============================================================
-   7. 라벨 텍스트 업데이트
-   ============================================================ */
-
-/** '현재 선택' 문구를 두 곳(미리보기 + 푸터)에 동시 반영 */
-function updateLabel() {
-    const text = `${state.sofa.name} 소파 + ${state.mat.name} 매트`;
-    if (previewLabelEl) previewLabelEl.textContent = text;
-    if (footerLabelEl)  footerLabelEl.textContent  = text;
-}
-
-/* ============================================================
-   8. 유틸리티
-   ============================================================ */
-
-/**
- * 컨테이너 안에서 선택된 버튼에만 .is-selected 적용
- * @param {Element} container
- * @param {string}  selectedId
- */
-function setActiveClass(container, selectedId) {
-    container.querySelectorAll('.sim-option').forEach(btn => {
-        const active = btn.dataset.id === selectedId;
-        btn.classList.toggle('is-selected', active);
-        btn.setAttribute('aria-checked', active ? 'true' : 'false');
+function setActive(container, id) {
+    container.querySelectorAll('.sw').forEach(btn => {
+        const on = btn.dataset.id === id;
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
     });
 }
 
 /**
- * SVG <stop> 요소의 stop-color 설정
- * @param {string} stopId  - SVG stop 엘리먼트 id
- * @param {string} color   - HEX 색상
+ * HEX 색상 밝기 조절
+ * @param {string} hex     '#rrggbb'
+ * @param {number} amount  양수=밝게, 음수=어둡게
  */
-function setStopColor(stopId, color) {
-    const el = document.getElementById(stopId);
-    if (el) el.style.stopColor = color;
-}
-
-/**
- * HEX 색상의 밝기 조절
- * @param {string} hex      - '#rrggbb' 형식
- * @param {number} amount   - 양수: 밝게, 음수: 어둡게 (0~100 범위)
- * @returns {string} 조절된 HEX 색상
- */
-function shadeColor(hex, amount) {
-    const num = parseInt(hex.replace('#', ''), 16);
-    const step = Math.round(255 * amount / 100);
-    const r = Math.min(255, Math.max(0, (num >> 16) + step));
-    const g = Math.min(255, Math.max(0, ((num >> 8) & 0xFF) + step));
-    const b = Math.min(255, Math.max(0, (num & 0xFF) + step));
+function shade(hex, amount) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    const s = Math.round(255 * amount / 100);
+    const r = Math.min(255, Math.max(0, (n >> 16) + s));
+    const g = Math.min(255, Math.max(0, ((n >> 8) & 0xFF) + s));
+    const b = Math.min(255, Math.max(0, (n & 0xFF) + s));
     return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
 }
 
-/* ============================================================
-   9. 초기화
-   ============================================================ */
+/**
+ * 색상이 밝은지 판별 (체크 아이콘 색상 결정용)
+ */
+function isLightColor(hex) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    const r = (n >> 16) & 0xFF;
+    const g = (n >> 8)  & 0xFF;
+    const b =  n        & 0xFF;
+    /* 상대 밝기 (WCAG 공식) */
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    return lum > 160;
+}
 
+/* ================================================================
+   11. 초기화
+   ================================================================ */
 function init() {
-    /* 옵션 버튼 생성 */
-    renderSofaOptions();
-    renderMatOptions();
+    renderSwatches(sofaSwEl, SOFAS, 'sofa');
+    renderSwatches(matSwEl,  MATS,  'mat');
 
-    /* 기본 선택값(첫 번째 항목) 표시 */
-    setActiveClass(sofaOptionsEl, state.sofa.id);
-    setActiveClass(matOptionsEl,  state.mat.id);
+    setActive(sofaSwEl, state.sofa.id);
+    setActive(matSwEl,  state.mat.id);
 
-    /* 초기 미리보기 & 라벨 적용 */
-    updatePreview();
+    updateSofa(state.sofa);
+    updateMat(state.mat);
     updateLabel();
 }
 
 document.addEventListener('DOMContentLoaded', init);
 
-/* ============================================================
-   10. 추후 확장 함수 (필요 시 주석 해제 후 사용)
-   ============================================================ */
-
+/* ================================================================
+   12. 추후 확장 함수 (필요 시 주석 해제)
+   ================================================================ */
 /*
-// ── 선택 조합 로컬 스토리지 저장 ──────────────────────────────
-function saveSelection() {
-    localStorage.setItem('sim-selection', JSON.stringify({
-        sofaId: state.sofa.id,
-        matId:  state.mat.id,
-    }));
-    alert('조합이 저장되었습니다.');
-}
-
-// ── 저장된 조합 불러오기 ────────────────────────────────────────
-function loadSavedSelection() {
-    const saved = JSON.parse(localStorage.getItem('sim-selection'));
-    if (!saved) return;
-    const sofa = SOFAS.find(s => s.id === saved.sofaId);
-    const mat  = MATS.find(m => m.id  === saved.matId);
-    if (sofa) onOptionClick(sofa, 'sofa');
-    if (mat)  onOptionClick(mat,  'mat');
-}
-
-// ── URL 파라미터로 공유 ────────────────────────────────────────
-// 사용 예: ?sofa=beige&mat=navy
 function shareURL() {
     const url = new URL(window.location.href);
     url.searchParams.set('sofa', state.sofa.id);
@@ -414,23 +355,20 @@ function shareURL() {
     navigator.clipboard.writeText(url.toString())
         .then(() => alert('URL이 클립보드에 복사되었습니다.'));
 }
-
 function loadFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    const sofa = SOFAS.find(s => s.id === params.get('sofa'));
-    const mat  = MATS.find(m => m.id  === params.get('mat'));
-    if (sofa) onOptionClick(sofa, 'sofa');
-    if (mat)  onOptionClick(mat,  'mat');
+    const p = new URLSearchParams(window.location.search);
+    const s = SOFAS.find(x => x.id === p.get('sofa'));
+    const m = MATS.find(x  => x.id === p.get('mat'));
+    if (s) onSwatchClick(s, 'sofa');
+    if (m) onSwatchClick(m, 'mat');
 }
-
-// ── 미리보기 이미지 다운로드 (html2canvas 라이브러리 필요) ────────
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+// html2canvas 라이브러리 필요
 function downloadImage() {
-    html2canvas(document.querySelector('.sim-scene')).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `sofa-${state.sofa.id}--mat-${state.mat.id}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+    html2canvas(document.querySelector('.sim__scene')).then(canvas => {
+        const a = document.createElement('a');
+        a.download = `${state.sofa.id}-${state.mat.id}.png`;
+        a.href = canvas.toDataURL();
+        a.click();
     });
 }
 */

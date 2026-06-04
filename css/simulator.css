@@ -1,610 +1,536 @@
-/* ============================================================
-   SIMULATOR.CSS  —  소파 & 바닥매트 매칭 시뮬레이터
-   ============================================================ */
+/* ================================================================
+   SIMULATOR.CSS — GANYANG 소파 바닥매트 상세페이지
+   ================================================================ */
 
-/* ------------------------------------------------------------
-   1. CSS 변수 (테마 수정 시 이 영역만 수정하세요)
-   ------------------------------------------------------------ */
+/* ── 변수 ── */
 :root {
-    /* 배경 */
-    --bg:           #0C0C0C;
-    --surface:      #141414;
-    --surface-2:    #1C1C1C;
-    --border:       #2C2C2C;
+    --bg:        #F7F5F2;
+    --white:     #FFFFFF;
+    --text-1:    #1A1917;
+    --text-2:    #6A6866;
+    --text-3:    #ABA9A7;
+    --border:    #E5E3E0;
+    --border-2:  #D0CEC9;
 
-    /* 포인트 컬러 (골드) */
-    --accent:       #C8A96E;
-    --accent-dark:  #A88B50;
-
-    /* 텍스트 */
-    --text-1:       #F0ECE6;   /* 기본 */
-    --text-2:       #9A9590;   /* 보조 */
-    --text-3:       #555050;   /* 약한 */
-
-    /* 룸 씬 배경 */
-    --scene-wall:   #2C2826;
-    --scene-floor:  #1C1816;
+    /* 씬 배경 */
+    --wall:      #E8E4DF;
+    --floor:     #D8D4CE;
 
     /* 폰트 */
-    --font:         'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
-    --font-num:     'Georgia', 'Times New Roman', serif;
+    --sans: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+    --serif: 'Georgia', 'Times New Roman', serif;
 
-    /* 공간 */
-    --sp-xs:  6px;
-    --sp-sm:  12px;
-    --sp-md:  20px;
-    --sp-lg:  32px;
-    --sp-xl:  48px;
-
-    /* 둥근 모서리 */
-    --r-sm: 6px;
-    --r-md: 12px;
-    --r-lg: 20px;
-
-    /* 전환 속도 */
-    --ease: 0.28s ease;
+    --ease: 0.26s ease;
 }
 
-/* ------------------------------------------------------------
-   2. 리셋 & 기본
-   ------------------------------------------------------------ */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
+/* ── 리셋 ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
-    font-family: var(--font);
+    font-family: var(--sans);
     background: var(--bg);
     color: var(--text-1);
     min-height: 100vh;
-    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
 }
+a { text-decoration: none; color: inherit; }
 
-/* ------------------------------------------------------------
-   3. 헤더
-   ------------------------------------------------------------ */
-.sim-header {
-    background: var(--surface);
+/* ================================================================
+   헤더
+   ================================================================ */
+.gh {
+    background: var(--white);
     border-bottom: 1px solid var(--border);
-    padding: 18px 0;
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 200;
 }
-
-.sim-header__inner {
-    max-width: 1400px;
+.gh__inner {
+    max-width: 1320px;
     margin: 0 auto;
     padding: 0 40px;
+    height: 60px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: space-between;
 }
-
-.sim-header__brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
-
-.sim-header__logo {
-    color: var(--accent);
+.gh__logo {
     font-size: 18px;
-    line-height: 1;
-}
-
-.sim-header__brand-name {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 3.5px;
-    color: var(--accent);
-    white-space: nowrap;
-}
-
-.sim-header__title-wrap {
-    border-left: 1px solid var(--border);
-    padding-left: 24px;
-}
-
-.sim-header__title {
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
+    font-weight: 800;
+    letter-spacing: 3px;
     color: var(--text-1);
 }
-
-.sim-header__subtitle {
-    font-size: 11px;
+.gh__nav {
+    display: flex;
+    gap: 32px;
+}
+.gh__nav a {
+    font-size: 12px;
+    letter-spacing: 1.5px;
     color: var(--text-2);
-    margin-top: 2px;
-    letter-spacing: 0.2px;
+    transition: color var(--ease);
 }
+.gh__nav a:hover { color: var(--text-1); }
 
-/* ------------------------------------------------------------
-   4. 메인 레이아웃
-   ------------------------------------------------------------ */
-.sim-main {
-    min-height: calc(100vh - 120px);
+/* ================================================================
+   상품 타이틀 배너
+   ================================================================ */
+.pt {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 0 40px;
+    text-align: center;
 }
-
-.sim-layout {
-    max-width: 1400px;
+.pt__inner {
+    max-width: 600px;
     margin: 0 auto;
-    padding: var(--sp-xl) 40px;
+    padding: 0 24px;
+}
+.pt__cat {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--text-3);
+    margin-bottom: 12px;
+}
+.pt__title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-1);
+    line-height: 1.3;
+    margin-bottom: 14px;
+}
+.pt__spec {
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: var(--text-3);
+}
+
+/* ================================================================
+   시뮬레이터 — 메인 레이아웃
+   ================================================================ */
+.sim {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 56px 40px;
+}
+.sim__layout {
     display: grid;
-    /* 미리보기(유동) + 패널(고정 너비) */
-    grid-template-columns: 1fr 420px;
-    gap: var(--sp-xl);
+    grid-template-columns: 1fr 400px;
+    gap: 56px;
     align-items: start;
 }
 
-/* ------------------------------------------------------------
-   5. 미리보기 영역
-   ------------------------------------------------------------ */
-.sim-preview {
+/* ── 미리보기 ── */
+.sim__preview {
     position: sticky;
-    top: calc(60px + var(--sp-lg)); /* 헤더 높이 + 여백 */
+    top: 80px;
 }
 
-/* ── 룸 씬 ── */
-.sim-scene {
+/* 룸 씬 */
+.sim__scene {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
-    border-radius: var(--r-lg);
+    aspect-ratio: 3 / 2;
+    border-radius: 16px;
     overflow: hidden;
 
-    /* 벽(상단 55%) + 바닥(하단 45%) */
+    /* 벽(위 52%) + 바닥(아래 48%) */
     background: linear-gradient(
         180deg,
-        var(--scene-wall)  0%,
-        var(--scene-wall)  54%,
-        var(--scene-floor) 54%,
-        var(--scene-floor) 100%
+        var(--wall)  0%,
+        var(--wall)  52%,
+        var(--floor) 52%,
+        var(--floor) 100%
     );
-
     box-shadow:
-        0 24px 80px rgba(0,0,0,0.6),
+        0 2px 4px rgba(0,0,0,0.04),
+        0 12px 40px rgba(0,0,0,0.10),
         0 0 0 1px var(--border);
 }
 
-/* 벽/바닥 경계 부드럽게 */
-.sim-scene::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0; right: 0;
-    height: 8%;
-    background: linear-gradient(180deg, var(--scene-wall), var(--scene-floor));
-    z-index: 0;
-    pointer-events: none;
-}
-
-/* 씬 전체에 내부 그림자 */
-.sim-scene::after {
+/* 씬 내부 은은한 그림자 */
+.sim__scene::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: var(--r-lg);
-    box-shadow: inset 0 0 80px rgba(0,0,0,0.35);
+    border-radius: 16px;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.06);
     pointer-events: none;
     z-index: 10;
 }
 
-/* ── 바닥매트 레이어 ── */
-.sim-scene__mat-layer {
+/* ── 매트 레이어 ── */
+.sim__mat-wrap {
     position: absolute;
-    bottom: 5%;
+    bottom: 4%;
     left: 50%;
     transform: translateX(-50%);
-    width: 72%;           /* 소파보다 약간 좁게, 앞으로 튀어나오는 느낌 */
+    width: 70%;
     z-index: 2;
 }
-
-/* CSS 색상 대체 표시 */
-.sim-scene__mat-shape {
+.sim__mat-shape {
     width: 100%;
-    padding-bottom: 26%;            /* 가로세로 비율 조정 */
+    padding-bottom: 27%;
     border-radius: 5px;
-    background-color: #F2EDE4;      /* JS에서 동적으로 교체됨 */
+    background-color: #F2EDE4;
     transition: background-color var(--ease);
     box-shadow:
-        0 6px 24px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.12); /* 상단 미묘한 하이라이트 */
+        0 4px 20px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.25);
 }
-
-/* 실제 이미지 표시 */
-.sim-scene__mat-img {
+.sim__mat-img {
     width: 100%;
     height: auto;
     display: block;
     border-radius: 5px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.45);
 }
 
 /* ── 소파 레이어 ── */
-.sim-scene__sofa-layer {
+.sim__sofa-wrap {
     position: absolute;
-    bottom: 10%;           /* 실제 사진 기준으로 바닥에 붙게 조정 */
+    bottom: 12%;
     left: 50%;
     transform: translateX(-50%);
-    width: 82%;            /* 실제 제품 사진에 맞게 넓게 */
+    width: 84%;
     z-index: 3;
 }
-
-/* SVG 소파 */
-.sim-scene__sofa-svg {
+.sim__sofa-img {
     width: 100%;
     height: auto;
     display: block;
-    /* 소파 그림자 */
-    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.55))
-            drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+    filter: drop-shadow(0 6px 20px rgba(0,0,0,0.18));
+    transition: filter var(--ease);
 }
 
-/* 실제 이미지
-   ★ 배경이 투명한 PNG를 사용하면 매트와 자연스럽게 합성됩니다.
-   ★ 배경 있는 JPEG 사용 시: .sim-scene 배경색을 사진 배경색과 맞추세요. */
-.sim-scene__sofa-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    object-position: bottom center;
-    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
-}
-
-/* ── 현재 선택 라벨 ── */
-.sim-preview__info {
+/* ── 선택 배지 ── */
+.sim__badge {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-top: 18px;
-    padding: 14px 20px;
-    background: var(--surface-2);
+    gap: 10px;
+    margin-top: 16px;
+    padding: 12px 18px;
+    background: var(--white);
     border: 1px solid var(--border);
-    border-radius: var(--r-md);
+    border-radius: 10px;
 }
-
-/* 펄스 점 */
-.sim-preview__info-dot {
-    width: 8px;
-    height: 8px;
+.sim__badge-dot {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: var(--accent);
+    background: var(--text-1);
     flex-shrink: 0;
-    animation: dot-pulse 2.2s ease infinite;
+    animation: blink 2.4s ease infinite;
 }
-
-@keyframes dot-pulse {
-    0%, 100% { opacity: 1;   transform: scale(1); }
-    50%       { opacity: 0.4; transform: scale(0.75); }
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
 }
-
-.sim-preview__info-text {
+.sim__badge span:last-child {
     font-size: 13px;
     color: var(--text-1);
-    letter-spacing: 0.3px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
 }
 
-/* ------------------------------------------------------------
-   6. 선택 패널
-   ------------------------------------------------------------ */
-.sim-panel {
+/* ── 옵션 패널 ── */
+.sim__panel {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-lg);
+    gap: 28px;
 }
 
-/* ── 스텝 공통 ── */
-.sim-step__head {
+/* 스텝 */
+.sim__step-head {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 18px;
+    gap: 14px;
+    margin-bottom: 20px;
 }
-
-/* 스텝 번호 (01 / 02) */
-.sim-step__num {
-    font-family: var(--font-num);
-    font-size: 30px;
-    font-weight: 400;
-    color: var(--accent);
+.sim__step-num {
+    font-family: var(--serif);
+    font-size: 26px;
+    color: var(--text-3);
     letter-spacing: -1px;
     line-height: 1;
     flex-shrink: 0;
-    padding-top: 2px;
+    padding-top: 3px;
 }
-
-.sim-step__title {
+.sim__step-title {
     font-size: 15px;
     font-weight: 700;
+    letter-spacing: 0.3px;
     color: var(--text-1);
-    letter-spacing: 0.4px;
 }
-
-.sim-step__desc {
-    font-size: 11px;
+.sim__step-desc {
+    font-size: 11.5px;
     color: var(--text-2);
-    margin-top: 4px;
-    line-height: 1.5;
+    margin-top: 3px;
 }
 
 /* 구분선 */
-.sim-divider {
+.sim__rule {
     border: none;
     border-top: 1px solid var(--border);
+    margin: 0;
 }
 
-/* ── 색상 옵션 그리드 ── */
-.sim-options {
+/* ── 색상 스와치 그리드 ── */
+.sim__swatches {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
     gap: 10px;
 }
 
-/* ── 색상 옵션 버튼 ── */
-.sim-option {
+/* 스와치 버튼 */
+.sw {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    cursor: pointer;
     padding: 10px 4px;
-    border-radius: var(--r-md);
-    border: 1px solid transparent;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
     background: transparent;
-    transition: background var(--ease), border-color var(--ease);
-    user-select: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: all var(--ease);
     -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
-
-.sim-option:hover {
-    background: var(--surface-2);
+.sw:hover {
+    background: var(--white);
     border-color: var(--border);
 }
-
-/* 선택된 버튼 */
-.sim-option.is-selected {
-    background: var(--surface-2);
-    border-color: var(--accent);
+.sw.is-on {
+    background: var(--white);
+    border-color: var(--text-1);
 }
 
-/* 색상 원형 스와치 */
-.sim-option__swatch {
+/* 컬러 원 */
+.sw__dot {
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     flex-shrink: 0;
-    border: 1.5px solid rgba(255,255,255,0.1);
-    box-shadow:
-        inset 0 1px 3px rgba(255,255,255,0.15),
-        0 3px 8px rgba(0,0,0,0.4);
     transition: transform var(--ease), box-shadow var(--ease);
 }
-
-.sim-option:hover .sim-option__swatch {
-    transform: scale(1.12);
-}
-
-/* 선택 링 */
-.sim-option.is-selected .sim-option__swatch {
+.sw:hover .sw__dot { transform: scale(1.1); }
+.sw.is-on .sw__dot {
     transform: scale(1.05);
     box-shadow:
-        inset 0 1px 3px rgba(255,255,255,0.15),
-        0 3px 8px rgba(0,0,0,0.4),
-        0 0 0 2.5px var(--bg),
-        0 0 0 5px var(--accent);
+        0 2px 8px rgba(0,0,0,0.12),
+        0 0 0 2.5px var(--white),
+        0 0 0 4.5px var(--text-1);
 }
-
-/* 선택 체크 아이콘 */
-.sim-option.is-selected .sim-option__swatch::after {
+/* 선택 체크 */
+.sw.is-on .sw__dot::after {
     content: '✓';
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
-    color: rgba(255,255,255,0.9);
-    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
+/* 밝은 색상용 체크 */
+.sw.is-on .sw__dot.is-light::after { color: rgba(0,0,0,0.55); text-shadow: none; }
 
-/* 색상 이름 */
-.sim-option__label {
+/* 컬러 이름 */
+.sw__name {
     font-size: 10.5px;
     color: var(--text-2);
     text-align: center;
+    line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
     transition: color var(--ease);
-    line-height: 1.3;
 }
-
-.sim-option.is-selected .sim-option__label {
+.sw.is-on .sw__name {
     color: var(--text-1);
     font-weight: 600;
 }
 
-/* ------------------------------------------------------------
-   7. 하단 선택 바 (푸터)
-   ------------------------------------------------------------ */
-.sim-footer {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 14px 0;
+/* ── 현재 선택 카드 ── */
+.sim__sel-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    background: var(--text-1);
+    border-radius: 10px;
+    gap: 12px;
+}
+.sim__sel-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.45);
+    flex-shrink: 0;
+}
+.sim__sel-value {
+    font-size: 13px;
+    color: #FFFFFF;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-align: right;
 }
 
-.sim-footer__inner {
-    max-width: 1400px;
+/* ================================================================
+   상품 스펙 바
+   ================================================================ */
+.spec {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 0;
+}
+.spec__inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+.spec__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 0 24px;
+}
+.spec__div {
+    width: 1px;
+    height: 36px;
+    background: var(--border);
+    flex-shrink: 0;
+}
+.spec__key {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: var(--text-3);
+}
+.spec__val {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-1);
+    letter-spacing: 0.3px;
+}
+
+/* ================================================================
+   하단 푸터 바
+   ================================================================ */
+.gf {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 14px 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+}
+.gf__inner {
+    max-width: 1320px;
     margin: 0 auto;
     padding: 0 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--sp-md);
-}
-
-.sim-footer__left {
-    display: flex;
-    align-items: center;
     gap: 16px;
 }
-
-.sim-footer__label {
-    font-size: 10px;
-    letter-spacing: 2.5px;
-    color: var(--text-3);
-    text-transform: uppercase;
-    flex-shrink: 0;
-}
-
-.sim-footer__value {
-    font-size: 13px;
-    color: var(--accent);
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    transition: all var(--ease);
-}
-
-/* 추후 확장용 버튼 스타일 */
-.sim-footer__actions {
+.gf__sel {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 14px;
+}
+.gf__label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-3);
     flex-shrink: 0;
 }
-
-.sim-btn {
-    padding: 9px 18px;
-    border-radius: var(--r-sm);
-    font-size: 12px;
+.gf__value {
+    font-size: 13px;
     font-weight: 600;
-    font-family: var(--font);
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: var(--surface-2);
     color: var(--text-1);
     letter-spacing: 0.3px;
+    transition: all 0.25s ease;
+}
+
+/* 확장용 버튼 */
+.gf__actions { display: flex; gap: 8px; }
+.gf-btn {
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--sans);
+    border: 1.5px solid var(--border-2);
+    background: transparent;
+    color: var(--text-1);
+    cursor: pointer;
+    letter-spacing: 0.3px;
     transition: all var(--ease);
-    white-space: nowrap;
+}
+.gf-btn:hover { border-color: var(--text-1); }
+.gf-btn--dark {
+    background: var(--text-1);
+    border-color: var(--text-1);
+    color: #fff;
+}
+.gf-btn--dark:hover { background: #333; border-color: #333; }
+
+/* ================================================================
+   반응형 — 태블릿 (≤ 1080px)
+   ================================================================ */
+@media (max-width: 1080px) {
+    .sim { padding: 40px 28px; }
+    .sim__layout { grid-template-columns: 1fr 360px; gap: 40px; }
+    .spec__inner { padding: 0 28px; }
+    .gh__inner, .gf__inner { padding: 0 28px; }
 }
 
-.sim-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+/* ================================================================
+   반응형 — 모바일 (≤ 800px)
+   ================================================================ */
+@media (max-width: 800px) {
+    .gh__nav { display: none; }
+    .gh__inner { padding: 0 20px; }
+
+    .pt { padding: 32px 0 28px; }
+    .pt__title { font-size: 22px; }
+
+    .sim { padding: 28px 20px 40px; }
+    .sim__layout { grid-template-columns: 1fr; gap: 28px; }
+    .sim__preview { position: static; }
+
+    .sim__swatches { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+
+    .spec__inner { flex-wrap: wrap; padding: 0 20px; gap: 0; }
+    .spec__item { min-width: 50%; padding: 12px 16px; }
+    .spec__div:nth-child(4) { display: none; }
+
+    .gf__inner { padding: 0 20px; }
+    .gf__label { display: none; }
 }
 
-.sim-btn--primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #1a1510;
-}
-
-.sim-btn--primary:hover {
-    background: var(--accent-dark);
-    border-color: var(--accent-dark);
-    color: #1a1510;
-}
-
-/* ------------------------------------------------------------
-   8. 반응형 — 태블릿 (≤ 1024px)
-   ------------------------------------------------------------ */
-@media (max-width: 1024px) {
-    .sim-layout {
-        grid-template-columns: 1fr 360px;
-        gap: var(--sp-lg);
-        padding: var(--sp-lg) 28px;
-    }
-}
-
-/* ------------------------------------------------------------
-   9. 반응형 — 모바일 (≤ 860px): 세로 레이아웃으로 전환
-   ------------------------------------------------------------ */
-@media (max-width: 860px) {
-    .sim-header__inner {
-        padding: 0 20px;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .sim-header__title-wrap {
-        border-left: none;
-        padding-left: 0;
-        width: 100%;
-        border-top: 1px solid var(--border);
-        padding-top: 12px;
-    }
-
-    .sim-layout {
-        grid-template-columns: 1fr;  /* 단일 열 */
-        padding: var(--sp-lg) 20px;
-        gap: var(--sp-lg);
-    }
-
-    .sim-preview {
-        position: static;            /* sticky 해제 */
-    }
-
-    .sim-options {
-        grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-        gap: 8px;
-    }
-
-    .sim-footer__inner {
-        padding: 0 20px;
-    }
-
-    .sim-footer__label {
-        display: none;               /* 좁은 화면에서 라벨 숨김 */
-    }
-}
-
-/* ------------------------------------------------------------
-   10. 반응형 — 소형 모바일 (≤ 480px)
-   ------------------------------------------------------------ */
+/* ================================================================
+   반응형 — 소형 (≤ 480px)
+   ================================================================ */
 @media (max-width: 480px) {
-    .sim-header__inner {
-        padding: 0 16px;
-    }
-
-    .sim-header__title {
-        font-size: 13px;
-    }
-
-    .sim-layout {
-        padding: var(--sp-md) 16px;
-    }
-
-    .sim-step__num {
-        font-size: 24px;
-    }
-
-    .sim-option__swatch {
-        width: 36px;
-        height: 36px;
-    }
-
-    .sim-option__label {
-        font-size: 10px;
-    }
-
-    .sim-footer__inner {
-        padding: 0 16px;
-    }
-
-    .sim-footer__value {
-        font-size: 12px;
-    }
+    .pt__title { font-size: 19px; }
+    .sim { padding: 20px 16px 36px; }
+    .sw__dot { width: 38px; height: 38px; }
+    .sw__name { font-size: 10px; }
+    .gf__inner { padding: 0 16px; }
 }
