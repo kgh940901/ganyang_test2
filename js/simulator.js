@@ -3,6 +3,33 @@
    ================================================================ */
 
 /* ================================================================
+   ★ 카페24 장바구니 연동 설정
+   카페24 관리자에서 아래 두 가지 값을 확인 후 입력하세요.
+
+   1) productNo
+      관리자 > 상품관리 > 상품목록 > 해당 상품의 번호(숫자)
+
+   2) optionCodes (매트 색상별 옵션코드)
+      관리자 > 상품관리 > 해당 상품 클릭
+      > 옵션/재고관리 탭 > 옵션 목록 > '옵션코드' 열
+      예시: 'P000BBAAH0001'
+   ================================================================ */
+const CAFE24 = {
+    productNo: 0,           /* ← 상품번호 숫자로 입력 (예: 123) */
+    optionCodes: {
+        'ivory':        '',   /* ← 각 색상의 옵션코드 입력 */
+        'cream':        '',
+        'beige':        '',
+        'olive':        '',
+        'navy':         '',
+        'charcoal':     '',
+        'terracotta':   '',
+        'dusty-rose':   '',
+        'black':        '',
+    }
+};
+
+/* ================================================================
    1. 데이터 설정
    색상 추가·수정은 이 영역만 변경하세요.
 
@@ -37,7 +64,7 @@ const MATS = [
 /* ================================================================
    2. 상태
    ================================================================ */
-const state = { sofa: SOFAS[0], mat: MATS[0] };
+const state = { sofa: SOFAS[0], mat: MATS[0], qty: 1 };
 
 /* ================================================================
    3. DOM 참조
@@ -50,6 +77,8 @@ const matSwEl     = document.getElementById('matSwatches');
 const badgeTextEl = document.getElementById('badgeText');
 const selTextEl   = document.getElementById('selText');
 const footerEl    = document.getElementById('footerText');
+const qtyValEl    = document.getElementById('qtyVal');
+const cartBtnEl   = document.getElementById('cartBtn');
 
 /* ================================================================
    4. SVG 생성 — 소파
@@ -231,10 +260,10 @@ function updateMat(mat) {
 }
 
 function updateLabel() {
-    const text = `${state.sofa.name} 소파 + ${state.mat.name} 매트`;
-    badgeTextEl.textContent = text;
-    selTextEl.textContent   = text;
-    footerEl.textContent    = text;
+    const comboText = `${state.sofa.name} 소파 + ${state.mat.name} 매트`;
+    badgeTextEl.textContent = comboText;
+    selTextEl.textContent   = comboText;
+    footerEl.textContent    = `${state.mat.name} 매트`;  /* 푸터는 매트 이름만 */
 }
 
 /* ================================================================
@@ -328,7 +357,104 @@ function isLightColor(hex) {
 }
 
 /* ================================================================
-   11. 초기화
+   11. 수량 조절
+   ================================================================ */
+function initQty() {
+    document.getElementById('qtyMinus').addEventListener('click', () => {
+        if (state.qty > 1) {
+            state.qty--;
+            qtyValEl.textContent = state.qty;
+        }
+    });
+    document.getElementById('qtyPlus').addEventListener('click', () => {
+        if (state.qty < 99) {
+            state.qty++;
+            qtyValEl.textContent = state.qty;
+        }
+    });
+}
+
+/* ================================================================
+   12. 장바구니 담기 (카페24)
+   ================================================================ */
+
+/**
+ * 토스트 메시지 표시
+ */
+function showToast(msg) {
+    const el = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    el.classList.add('is-show');
+    setTimeout(() => el.classList.remove('is-show'), 2800);
+}
+
+/**
+ * 장바구니 담기
+ * 카페24 도메인에서 실행 시 폼 POST로 장바구니에 직접 추가됩니다.
+ */
+function addToCart() {
+    /* ── 설정값 검증 ── */
+    if (!CAFE24.productNo) {
+        alert('simulator.js 상단의 CAFE24.productNo를 입력해주세요.\n(카페24 관리자 > 상품관리 > 상품번호)');
+        return;
+    }
+    const optionCode = CAFE24.optionCodes[state.mat.id];
+    if (!optionCode) {
+        alert(`"${state.mat.name}" 색상의 옵션코드가 비어있습니다.\nsimulator.js 상단 CAFE24.optionCodes를 확인해주세요.`);
+        return;
+    }
+
+    /* ── 버튼 로딩 상태 ── */
+    if (cartBtnEl) {
+        cartBtnEl.classList.add('is-loading');
+        cartBtnEl.disabled = true;
+    }
+
+    /* ── 카페24 장바구니 폼 POST ──
+       이 페이지가 카페24 도메인에 업로드되어 있을 때 동작합니다.
+       /exec/front/order/basket/ 은 카페24의 장바구니 처리 주소입니다. */
+    const form = document.createElement('form');
+    form.method  = 'post';
+    form.action  = '/exec/front/order/basket/';
+    form.style.display = 'none';
+
+    [
+        ['product_no',  CAFE24.productNo],
+        ['option_code', optionCode],
+        ['quantity',    state.qty],
+        ['basketType',  'cart'],
+    ].forEach(([name, value]) => {
+        const input = document.createElement('input');
+        input.type  = 'hidden';
+        input.name  = name;
+        input.value = value;
+        form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+
+    /* 카페24 환경에서는 폼 제출 → 장바구니 페이지로 이동
+       개발/미리보기 환경에서는 토스트로 확인만 표시 */
+    const isCafe24 = window.location.hostname.includes('cafe24.com')
+                  || window.location.hostname.includes('cafe24.net');
+
+    if (isCafe24) {
+        form.submit();
+    } else {
+        /* 로컬/GitHub Pages 미리보기용 피드백 */
+        document.body.removeChild(form);
+        setTimeout(() => {
+            if (cartBtnEl) {
+                cartBtnEl.classList.remove('is-loading');
+                cartBtnEl.disabled = false;
+            }
+            showToast(`${state.mat.name} 매트 ${state.qty}개 — 장바구니에 담겼습니다.`);
+        }, 800);
+    }
+}
+
+/* ================================================================
+   13. 초기화
    ================================================================ */
 function init() {
     renderSwatches(sofaSwEl, SOFAS, 'sofa');
@@ -340,6 +466,7 @@ function init() {
     updateSofa(state.sofa);
     updateMat(state.mat);
     updateLabel();
+    initQty();
 }
 
 document.addEventListener('DOMContentLoaded', init);
