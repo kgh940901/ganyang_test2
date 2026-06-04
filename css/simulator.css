@@ -561,211 +561,23 @@ body {
 }
 
 /* ================================================================
-   상품 상세 설명 (시뮬레이터 하단)
+   상품 상세 이미지 영역
    ================================================================ */
 .dtl {
     border-top: 1px solid var(--border);
+    padding: 0 20px 60px;
+    /* 이미지가 없을 때도 최소 높이 유지 */
+    min-height: 40px;
 }
-
-/* 공통 섹션 */
-.dtl__sec {
-    padding: 64px 20px;
-    border-bottom: 1px solid var(--border);
-}
-.dtl__sec--gray {
-    background: var(--bg);
-}
-.dtl__inner {
-    max-width: 840px;
+.dtl__img {
+    display: block;
+    width: 100%;
+    max-width: 900px;    /* 가로 최대 900px */
     margin: 0 auto;
-}
-
-/* 라벨 */
-.dtl__label {
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: var(--text-3);
-    margin-bottom: 12px;
-}
-
-/* 섹션 제목 */
-.dtl__h2 {
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--text-1);
-    line-height: 1.35;
-    letter-spacing: -0.5px;
-    margin-bottom: 20px;
-}
-
-/* 본문 텍스트 */
-.dtl__body {
-    font-size: 14px;
-    color: var(--text-2);
-    line-height: 1.9;
-}
-.dtl__body--sm { font-size: 13px; margin-bottom: 28px; }
-
-/* 이미지 영역 */
-.dtl__img-wrap {
-    width: 100%;
-    margin-top: 36px;
-    border-radius: 12px;
-    overflow: hidden;
-}
-.dtl__img-wrap img {
-    width: 100%;
     height: auto;
-    display: block;
 }
-/* 실제 이미지 없을 때 placeholder */
-.dtl__img-wrap--placeholder {
-    aspect-ratio: 16 / 7;
-    background: var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.dtl__img-hint {
-    font-size: 12px;
-    color: var(--text-3);
-    letter-spacing: 0.3px;
-}
-
-/* 특징 4가지 그리드 */
-.dtl__feat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 36px;
-}
-.dtl__feat {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px 20px;
-}
-.dtl__feat-num {
-    display: block;
-    font-family: var(--serif);
-    font-size: 20px;
-    color: var(--text-3);
-    margin-bottom: 12px;
-    letter-spacing: -0.5px;
-}
-.dtl__feat-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-1);
-    margin-bottom: 8px;
-}
-.dtl__feat-desc {
-    font-size: 12.5px;
-    color: var(--text-2);
-    line-height: 1.7;
-}
-
-/* 컬러 컬렉션 스와치 */
-.dtl__colors {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-top: 28px;
-}
-.dtl__color-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
-}
-.dtl__color-dot {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(0,0,0,0.08);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.10);
-}
-.dtl__color-name {
-    font-size: 10px;
-    color: var(--text-2);
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* 스펙 테이블 */
-.dtl__table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 28px;
-    font-size: 13.5px;
-}
-.dtl__table th,
-.dtl__table td {
-    padding: 14px 16px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-    line-height: 1.6;
-}
-.dtl__table th {
-    width: 100px;
-    font-weight: 600;
-    color: var(--text-2);
-    background: var(--bg);
-    white-space: nowrap;
-}
-.dtl__table td { color: var(--text-1); }
-.dtl__table tr:last-child th,
-.dtl__table tr:last-child td { border-bottom: none; }
-
-/* 관리법 목록 */
-.dtl__care {
-    list-style: none;
-    margin-top: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-.dtl__care li {
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-}
-.dtl__care-icon {
-    font-size: 10px;
-    color: var(--text-3);
-    padding-top: 4px;
-    flex-shrink: 0;
-}
-.dtl__care strong {
-    display: block;
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--text-1);
-    margin-bottom: 4px;
-}
-.dtl__care p {
-    font-size: 12.5px;
-    color: var(--text-2);
-    line-height: 1.7;
-    margin: 0;
-}
-
-/* ── 상세 PC 반응형 ── */
-@media (min-width: 760px) {
-    .dtl__sec { padding: 80px 40px; }
-    .dtl__h2  { font-size: 32px; }
-    .dtl__body { font-size: 15px; }
-    .dtl__feat-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .dtl__feat { padding: 28px 22px; }
-    .dtl__color-dot  { width: 42px; height: 42px; }
-    .dtl__color-name { font-size: 11px; }
-    .dtl__table { font-size: 14px; }
-    .dtl__table th { width: 130px; }
-    .dtl__care strong { font-size: 14px; }
-    .dtl__care p { font-size: 13px; }
-}
-@media (min-width: 1100px) {
-    .dtl__sec { padding: 96px 60px; }
-    .dtl__h2  { font-size: 36px; }
+/* src가 비어있을 때 숨김 */
+.dtl__img:not([src]),
+.dtl__img[src=""] {
+    display: none;
 }

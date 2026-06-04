@@ -464,20 +464,7 @@ function renderSwatches(container, items, type) {
 }
 
 /* ================================================================
-   15. 상세 섹션 — 컬러 팔레트 자동 렌더링
-   ================================================================ */
-function renderDetailColors() {
-    const container = document.getElementById('dtlColors');
-    if (!container) return;
-    container.innerHTML = MATS.map(m => `
-        <div class="dtl__color-item">
-            <span class="dtl__color-dot" style="background:${m.color}"></span>
-            <span class="dtl__color-name">${m.name}</span>
-        </div>`).join('');
-}
-
-/* ================================================================
-   16. 초기화
+   15. 초기화
    ================================================================ */
 function init() {
     renderSwatches(sofaSwEl, SOFAS, 'sofa');
@@ -488,7 +475,6 @@ function init() {
     updateMatVisual(null);
     renderOptBox();
     updateBadge();
-    renderDetailColors();
 }
 
 document.addEventListener('DOMContentLoaded', init);
