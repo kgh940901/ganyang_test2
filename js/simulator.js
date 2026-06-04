@@ -6,10 +6,17 @@
    1. 데이터 설정
    색상/이름 추가·수정 시 이 영역만 변경하세요.
 
-   이미지 사용 방법:
-     1) assets/sofas/ 또는 assets/mats/ 폴더에 이미지 파일을 추가합니다.
-     2) 아래 각 항목의 `image` 줄 주석을 해제합니다.
-     3) 이미지 로드 실패 시 자동으로 CSS 색상 표시로 전환됩니다.
+   ★ 이미지 교체 방법:
+     1) assets/sofas/ 폴더에 소파 이미지를 저장합니다.
+        권장 형식: 배경이 투명한 PNG (소파만 단독 촬영)
+        파일명 예시: ivory.png, beige.png, dark-gray.png ...
+     2) 아래 image 경로가 이미 활성화되어 있습니다.
+        파일을 폴더에 넣기만 하면 자동으로 표시됩니다.
+     3) 이미지 파일이 없으면 자동으로 SVG 색상으로 대체됩니다.
+
+   ★ 배경 있는 사진(JPEG 등) 사용 시:
+        index.html의 .sim-scene 배경색을
+        사진 배경색과 동일하게 맞추면 자연스럽게 보입니다.
    ============================================================ */
 
 /** 소파 색상 목록 */
@@ -18,43 +25,43 @@ const SOFAS = [
         id: 'ivory',
         name: '아이보리',
         color: '#F2EDE4',
-        // image: 'assets/sofas/ivory.png',
+        image: 'assets/sofas/ivory.png',
     },
     {
         id: 'cream',
         name: '크림',
         color: '#E5DEC8',
-        // image: 'assets/sofas/cream.png',
+        image: 'assets/sofas/cream.png',
     },
     {
         id: 'beige',
         name: '베이지',
         color: '#C8A882',
-        // image: 'assets/sofas/beige.png',
+        image: 'assets/sofas/beige.png',
     },
     {
         id: 'light-gray',
         name: '라이트 그레이',
         color: '#B8B4B0',
-        // image: 'assets/sofas/light-gray.png',
+        image: 'assets/sofas/light-gray.png',
     },
     {
         id: 'dark-gray',
         name: '다크 그레이',
         color: '#6A6866',
-        // image: 'assets/sofas/dark-gray.png',
+        image: 'assets/sofas/dark-gray.png',
     },
     {
         id: 'navy',
         name: '네이비',
         color: '#1E2D4A',
-        // image: 'assets/sofas/navy.png',
+        image: 'assets/sofas/navy.png',
     },
     {
         id: 'black',
         name: '블랙',
         color: '#1C1C1C',
-        // image: 'assets/sofas/black.png',
+        image: 'assets/sofas/black.png',
     },
 ];
 
@@ -64,55 +71,55 @@ const MATS = [
         id: 'ivory',
         name: '아이보리',
         color: '#F2EDE4',
-        // image: 'assets/mats/ivory.png',
+        image: 'assets/mats/ivory.png',
     },
     {
         id: 'cream',
         name: '크림',
         color: '#E5DEC8',
-        // image: 'assets/mats/cream.png',
+        image: 'assets/mats/cream.png',
     },
     {
         id: 'beige',
         name: '베이지',
         color: '#C8A882',
-        // image: 'assets/mats/beige.png',
+        image: 'assets/mats/beige.png',
     },
     {
         id: 'olive',
         name: '올리브',
         color: '#6B7645',
-        // image: 'assets/mats/olive.png',
+        image: 'assets/mats/olive.png',
     },
     {
         id: 'navy',
         name: '네이비',
         color: '#1E2D4A',
-        // image: 'assets/mats/navy.png',
+        image: 'assets/mats/navy.png',
     },
     {
         id: 'charcoal',
         name: '차콜',
         color: '#4A4848',
-        // image: 'assets/mats/charcoal.png',
+        image: 'assets/mats/charcoal.png',
     },
     {
         id: 'terracotta',
         name: '테라코타',
         color: '#C4613A',
-        // image: 'assets/mats/terracotta.png',
+        image: 'assets/mats/terracotta.png',
     },
     {
         id: 'dusty-rose',
         name: '더스티 로즈',
         color: '#D4848A',
-        // image: 'assets/mats/dusty-rose.png',
+        image: 'assets/mats/dusty-rose.png',
     },
     {
         id: 'black',
         name: '블랙',
         color: '#1C1C1C',
-        // image: 'assets/mats/black.png',
+        image: 'assets/mats/black.png',
     },
 ];
 
