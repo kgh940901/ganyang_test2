@@ -174,9 +174,9 @@ body {
     flex-direction: column;
     border: 1px solid var(--border);
     border-radius: 8px;
-    overflow: hidden;
     background: var(--white);
     margin-bottom: 14px;
+    /* overflow: hidden 제거 — 드롭다운 리스트가 잘리지 않도록 */
 }
 .opt-row {
     display: flex;
@@ -185,7 +185,8 @@ body {
     border-bottom: 1px solid var(--border);
     min-height: 52px;
 }
-.opt-row:last-child { border-bottom: none; }
+.opt-row:first-child { border-radius: 8px 8px 0 0; }
+.opt-row:last-child  { border-bottom: none; border-radius: 0 0 8px 8px; }
 .opt-row__label {
     width: 72px;
     flex-shrink: 0;
@@ -243,7 +244,7 @@ body {
     background: var(--white);
     border: 1.5px solid var(--text-1);
     border-top: none;
-    z-index: 50;
+    z-index: 200;
     list-style: none;
     box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
