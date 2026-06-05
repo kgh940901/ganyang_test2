@@ -11,11 +11,12 @@
    optionCodes: 관리자 > 해당 상품 > 옵션/재고관리 탭 > 옵션코드 열
    ================================================================ */
 const CAFE24 = {
-    /* 상품 페이지 URL — 카페24 관리자에서 상품 링크를 복사해 입력하세요
-       예) 'https://sensemom.com/product/detail.html?product_no=195' */
-    productUrl: '',
+    /* ★ 매트 상품 페이지 URL을 입력하세요
+       sensemom.com 관리자 > 상품관리에서 상품 번호 확인 후 변경
+       예) 'https://sensemom.com/product/detail.html?product_no=200' */
+    productUrl: 'https://sensemom.com/',
 
-    /* 판매가 (원, 숫자만) — 선택한 항목 금액 표시용  예) 32000 */
+    /* 판매가 (원, 숫자만)  예) 32000 */
     price: 0,
 };
 
@@ -400,27 +401,15 @@ function selectMat(mat) {
    ================================================================ */
 function goToProduct(type) {
     if (cartItems.length === 0) {
-        showToast('매트 색상을 선택해주세요.');
+        showToast('매트 색상을 먼저 선택해주세요.');
         return;
     }
 
-    if (!CAFE24.productUrl) {
-        showToast('simulator.js의 CAFE24.productUrl을 입력해주세요.');
-        return;
-    }
-
-    /* 선택한 색상 이름을 URL 파라미터로 전달 (참고용) */
-    const colors = cartItems.map(i => i.mat.name).join(',');
-    const url    = CAFE24.productUrl
-        + (CAFE24.productUrl.includes('?') ? '&' : '?')
-        + 'selected_colors=' + encodeURIComponent(colors);
+    const url = CAFE24.productUrl || 'https://sensemom.com/';
 
     if (type === 'cart') {
-        /* 장바구니: 새 탭으로 상품 페이지 열기 */
         window.open(url, '_blank');
-        showToast('상품 페이지에서 장바구니에 담아주세요 ✓');
     } else {
-        /* 바로 구매: 현재 탭에서 상품 페이지로 이동 */
         window.location.href = url;
     }
 }
