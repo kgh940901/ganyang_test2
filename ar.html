@@ -256,9 +256,9 @@ function makeMeshFabricTex(hex, opts) {
         ctx.fillRect(0, ly+3, S, 1);
         ctx.fillRect(0, ly-1, S, 1);
 
-        /* 흰색 사각 라벨 (줄 아래, 앞 모서리 쪽) */
-        var lw = 50, lh = 32;
-        var lx = S * 0.64, lyy = S * 0.80;
+        /* 흰색 사각 라벨 (줄에 딱 붙어서, 가운데) — 줄이 라벨 윗변을 지나감 */
+        var lw = 46, lh = 30;
+        var lx = S * 0.50 - lw / 2, lyy = ly + 2;
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(lx, lyy, lw, lh);
         ctx.strokeStyle = 'rgba(0,0,0,0.12)';
