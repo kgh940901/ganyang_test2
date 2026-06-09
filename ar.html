@@ -51,6 +51,14 @@
     </div>
 
     <div class="ui-section">
+        <p class="ui-label">스타일링</p>
+        <div class="ui-chips" id="stylingChips">
+            <button class="chip is-on" data-style="full">침구 포함</button>
+            <button class="chip" data-style="bare">매트리스만</button>
+        </div>
+    </div>
+
+    <div class="ui-section" id="beddingSection">
         <p class="ui-label">침구 색상</p>
         <div class="ui-colors" id="colorChips">
             <button class="color-chip is-on" data-color="#F5F2EE" data-name="화이트"  style="background:#F5F2EE"></button>
@@ -163,6 +171,7 @@ var WALL_HEX  = { white:0xF3F0EC, beige:0xE5DBCA, gray:0xD2CFCA, mocha:0xC0B0A1 
 var urlP  = new URLSearchParams(window.location.search);
 var state = { prod:urlP.get('prod')||'twoside', size:urlP.get('size')||'ss',
               bedding:0xF5F2EE, floor:'wood', wall:'white',
+              styling:'full',   /* 'full' = 침구 포함, 'bare' = 매트리스만 */
               isAR:false, placed:false, rotDeg:0 };
 
 /* ══════════════════════════════════════════
@@ -485,25 +494,28 @@ function createBed(prodKey, sizeKey, beddingHex) {
             });
         }
 
-        /* ── 이불 (선택 색상) ── */
-        var bddH=0.06, bddLen=sz.l*0.65;
-        var bddMat=new THREE.MeshStandardMaterial({map:makeBeddingTex(beddingHex),roughness:0.94,metalness:0,envMapIntensity:0.25});
-        var bddMesh=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.02,bddH,bddLen),bddMat);
-        bddMesh.position.set(0,mattH+bddH/2,sz.l*0.06); bddMesh.castShadow=true; g.add(bddMesh);
+        /* ── 침구 (스타일링 'full'일 때만) ── */
+        if (state.styling === 'full') {
+            /* 이불 (선택 색상) */
+            var bddH=0.06, bddLen=sz.l*0.65;
+            var bddMat=new THREE.MeshStandardMaterial({map:makeBeddingTex(beddingHex),roughness:0.94,metalness:0,envMapIntensity:0.25});
+            var bddMesh=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.02,bddH,bddLen),bddMat);
+            bddMesh.position.set(0,mattH+bddH/2,sz.l*0.06); bddMesh.castShadow=true; g.add(bddMesh);
 
-        /* 이불 접힘 */
-        var foldBr=Math.min(0xFFFFFF,beddingHex+0x0E0E0E);
-        var foldMesh=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.02,0.02,0.22),new THREE.MeshStandardMaterial({map:makeBeddingTex(foldBr),roughness:0.92}));
-        foldMesh.position.set(0,mattH+bddH+0.01,sz.l*0.06-bddLen/2-0.01); g.add(foldMesh);
+            /* 이불 접힘 */
+            var foldBr=Math.min(0xFFFFFF,beddingHex+0x0E0E0E);
+            var foldMesh=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.02,0.02,0.22),new THREE.MeshStandardMaterial({map:makeBeddingTex(foldBr),roughness:0.92}));
+            foldMesh.position.set(0,mattH+bddH+0.01,sz.l*0.06-bddLen/2-0.01); g.add(foldMesh);
 
-        /* 베개 */
-        var pilY=mattH+0.038, pilZ=-sz.l/2+0.35;
-        [-sz.w*0.22,sz.w*0.22].forEach(function(px,i){
-            var pt=makeQuiltTex(i===0?0xF8F5F0:0xF0EDE8);
-            var pm=new THREE.MeshStandardMaterial({map:pt,roughness:0.9,envMapIntensity:0.3});
-            var pil=new THREE.Mesh(new THREE.BoxGeometry(sz.w*0.38,0.08,0.54),pm);
-            pil.position.set(px,pilY,pilZ); pil.castShadow=true; g.add(pil);
-        });
+            /* 베개 */
+            var pilY=mattH+0.038, pilZ=-sz.l/2+0.35;
+            [-sz.w*0.22,sz.w*0.22].forEach(function(px,i){
+                var pt=makeQuiltTex(i===0?0xF8F5F0:0xF0EDE8);
+                var pm=new THREE.MeshStandardMaterial({map:pt,roughness:0.9,envMapIntensity:0.3});
+                var pil=new THREE.Mesh(new THREE.BoxGeometry(sz.w*0.38,0.08,0.54),pm);
+                pil.position.set(px,pilY,pilZ); pil.castShadow=true; g.add(pil);
+            });
+        }
 
     } else {
         /* ━━ 침대 프레임 타입 (시그니처 등) ━━ */
@@ -537,16 +549,18 @@ function createBed(prodKey, sizeKey, beddingHex) {
         var topper=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.02,0.05,sz.l-0.02),new THREE.MeshStandardMaterial({map:makeQuiltTex(0xFAF7F3),roughness:0.92,envMapIntensity:0.4}));
         topper.position.y=surfY+0.025; topper.castShadow=true; g.add(topper); surfY+=0.05;
 
-        var bddH=0.09,bddLen=sz.l*0.62;
-        var bddM=new THREE.MeshStandardMaterial({map:makeBeddingTex(beddingHex),roughness:0.94,metalness:0,envMapIntensity:0.3});
-        var bdg=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.04,bddH,bddLen),bddM); bdg.position.set(0,surfY+bddH/2,sz.l*0.07); bdg.castShadow=true; g.add(bdg);
-        var fm=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.04,0.024,0.26),new THREE.MeshStandardMaterial({map:makeBeddingTex(Math.min(0xFFFFFF,beddingHex+0x101010)),roughness:0.92}));
-        fm.position.set(0,surfY+bddH+0.012,sz.l*0.07-bddLen/2-0.01); g.add(fm);
-        [-sz.w*0.22,sz.w*0.22].forEach(function(px,i){
-            var pt=makeQuiltTex(i===0?0xF8F5F0:0xF0EDE8);
-            var pil=new THREE.Mesh(new THREE.BoxGeometry(sz.w*0.38,0.088,0.56),new THREE.MeshStandardMaterial({map:pt,roughness:0.9,envMapIntensity:0.35}));
-            pil.position.set(px,surfY+0.044,-sz.l/2+0.38); pil.castShadow=true; g.add(pil);
-        });
+        if (state.styling === 'full') {
+            var bddH=0.09,bddLen=sz.l*0.62;
+            var bddM=new THREE.MeshStandardMaterial({map:makeBeddingTex(beddingHex),roughness:0.94,metalness:0,envMapIntensity:0.3});
+            var bdg=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.04,bddH,bddLen),bddM); bdg.position.set(0,surfY+bddH/2,sz.l*0.07); bdg.castShadow=true; g.add(bdg);
+            var fm=new THREE.Mesh(new THREE.BoxGeometry(sz.w-0.04,0.024,0.26),new THREE.MeshStandardMaterial({map:makeBeddingTex(Math.min(0xFFFFFF,beddingHex+0x101010)),roughness:0.92}));
+            fm.position.set(0,surfY+bddH+0.012,sz.l*0.07-bddLen/2-0.01); g.add(fm);
+            [-sz.w*0.22,sz.w*0.22].forEach(function(px,i){
+                var pt=makeQuiltTex(i===0?0xF8F5F0:0xF0EDE8);
+                var pil=new THREE.Mesh(new THREE.BoxGeometry(sz.w*0.38,0.088,0.56),new THREE.MeshStandardMaterial({map:pt,roughness:0.9,envMapIntensity:0.35}));
+                pil.position.set(px,surfY+0.044,-sz.l/2+0.38); pil.castShadow=true; g.add(pil);
+            });
+        }
     }
 
     return g;
@@ -650,7 +664,8 @@ document.getElementById('arEndBtn').addEventListener('click',function(){var s=re
 document.getElementById('arStartBtn').addEventListener('click',startAR);
 document.getElementById('arResetBtn').addEventListener('click',function(){if(bedGroup)bedGroup.visible=false;state.placed=false;state.rotDeg=0;document.getElementById('rotateBar').style.display='none';reticle.visible=hasHitTest;document.getElementById('arGuide').textContent=hasHitTest?'바닥을 향해 카메라를 천천히 움직여주세요':'화면을 탭해서 배치하세요';document.getElementById('arGuide').style.display='block';});
 document.getElementById('prodTabs').addEventListener('click',function(e){var t=e.target.closest('.prod-tab');if(!t)return;document.querySelectorAll('.prod-tab').forEach(function(b){b.classList.remove('is-on');});t.classList.add('is-on');state.prod=t.dataset.prod;updateBed();});
-document.getElementById('sizeChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('.chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.size=b.dataset.size;updateBed();});
+document.getElementById('sizeChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('#sizeChips .chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.size=b.dataset.size;updateBed();});
+document.getElementById('stylingChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('#stylingChips .chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.styling=b.dataset.style;document.getElementById('beddingSection').style.display=(state.styling==='full')?'':'none';updateBed();});
 document.getElementById('colorChips').addEventListener('click',function(e){var b=e.target.closest('.color-chip');if(!b)return;document.querySelectorAll('.color-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.bedding=parseInt(b.dataset.color.replace('#',''),16);document.getElementById('colorName').textContent=b.dataset.name;updateBed();});
 document.getElementById('floorChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#floorChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.floor=b.dataset.key;var nt=makeWoodTex(FLOOR_HEX[state.floor]);floorMesh.material.map=nt;floorMesh.material.needsUpdate=true;});
 document.getElementById('wallChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#wallChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.wall=b.dataset.key;backWallMesh.material.color.setHex(WALL_HEX[state.wall]);sideWallMesh.material.color.setHex(WALL_HEX[state.wall]);});
