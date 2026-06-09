@@ -44,7 +44,7 @@
                 <span class="ar-btn__icon">◎</span>
                 AR로 내 방에서 보기
             </button>
-            <p class="ar-hint" id="arHint">Android Chrome에서 AR 이용 가능 / PC는 3D 미리보기만</p>
+            <p class="ar-hint" id="arHint">Android Chrome · iPhone Safari(iOS 16+)에서 AR 이용 가능</p>
         </div>
     </div>
 
@@ -216,22 +216,48 @@
         controls.update();
 
         /* ── WebXR AR ── */
-        var hitTestSource = null;
-        var localSpace    = null;
+        var hitTestSource  = null;
+        var localSpace     = null;
+        var hasHitTest     = false;
+        var lastCamPos     = new THREE.Vector3();
+        var lastCamDir     = new THREE.Vector3();
+        var xrController   = null;
+
+        function placeBed() {
+            if (!bedGroup) return;
+            if (hasHitTest && reticle.visible) {
+                bedGroup.position.copy(reticle.position);
+            } else {
+                /* iOS 탭-투-플레이스: 카메라 2m 전방, 바닥 높이 */
+                var pos = lastCamPos.clone();
+                var dir = lastCamDir.clone();
+                dir.y = 0;
+                if (dir.length() < 0.001) dir.set(0, 0, -1);
+                dir.normalize();
+                pos.addScaledVector(dir, 2.0);
+                pos.y = 0;
+                bedGroup.position.copy(pos);
+            }
+            bedGroup.visible = true;
+            state.placed = true;
+            reticle.visible = false;
+            document.getElementById('arPlaceBtn').style.display = 'none';
+            document.getElementById('arGuide').style.display    = 'none';
+        }
 
         function startAR() {
             var btn  = document.getElementById('arStartBtn');
             var hint = document.getElementById('arHint');
 
             if (!navigator.xr) {
-                hint.textContent = '⚠ AR 미지원 브라우저 (Android Chrome 필요)';
+                hint.textContent = '⚠ AR 미지원 브라우저 (Android Chrome 또는 iPhone Safari 필요)';
                 hint.style.color = '#ff8080';
                 return;
             }
 
             navigator.xr.isSessionSupported('immersive-ar').then(function(supported) {
                 if (!supported) {
-                    hint.textContent = '⚠ 이 기기는 AR 미지원 (ARCore 필요)';
+                    hint.textContent = '⚠ 이 기기는 AR 미지원 (ARCore / ARKit 필요)';
                     hint.style.color = '#ff8080';
                     return;
                 }
@@ -240,33 +266,55 @@
                 btn.textContent = '카메라 시작 중...';
 
                 navigator.xr.requestSession('immersive-ar', {
-                    requiredFeatures: ['hit-test', 'local'],
-                    optionalFeatures: ['dom-overlay'],
+                    requiredFeatures: ['local'],           /* hit-test는 선택사항 (iOS 호환) */
+                    optionalFeatures: ['hit-test', 'dom-overlay'],
                     domOverlay: { root: document.getElementById('arOverlay') }
                 }).then(function(session) {
                     renderer.xr.setSession(session);
-                    return Promise.all([
-                        session.requestReferenceSpace('local'),
-                        session.requestReferenceSpace('viewer')
-                    ]).then(function(spaces) {
-                        localSpace = spaces[0];
-                        return session.requestHitTestSource({ space: spaces[1] });
-                    }).then(function(src) {
-                        hitTestSource    = src;
-                        scene.background = null;
-                        floor.visible    = false;
-                        backWall.visible = false;
-                        reticle.visible  = true;
-                        state.isAR       = true;
-                        state.placed     = false;
-                        if (bedGroup) bedGroup.visible = false;
 
-                        document.getElementById('productUI').style.display  = 'none';
-                        document.getElementById('arOverlay').style.display  = 'flex';
-                        document.getElementById('arPlaceBtn').style.display = 'none';
-                        document.getElementById('arGuide').style.display    = 'block';
-                        session.addEventListener('end', endAR);
+                    /* XR 컨트롤러: 화면 탭 이벤트 (iOS 탭-투-플레이스) */
+                    xrController = renderer.xr.getController(0);
+                    xrController.addEventListener('select', function() {
+                        if (!state.placed) {
+                            placeBed();
+                        } else {
+                            /* 이미 배치됐으면 탭으로 위치 이동 */
+                            state.placed = false;
+                            placeBed();
+                        }
                     });
+                    scene.add(xrController);
+
+                    session.requestReferenceSpace('local').then(function(ls) {
+                        localSpace = ls;
+                        /* hit-test 시도 (Android에서 작동, iOS에서 실패해도 무방) */
+                        session.requestReferenceSpace('viewer').then(function(viewerSpace) {
+                            return session.requestHitTestSource({ space: viewerSpace });
+                        }).then(function(src) {
+                            hitTestSource = src;
+                            hasHitTest    = true;
+                            reticle.visible = true;
+                        }).catch(function() {
+                            /* iOS 등 hit-test 미지원 → 탭-투-플레이스 안내 */
+                            hasHitTest = false;
+                            reticle.visible = false;
+                            document.getElementById('arGuide').textContent = '화면을 탭해서 침대를 배치하세요';
+                            document.getElementById('arGuide').style.display = 'block';
+                        });
+                    });
+
+                    scene.background = null;
+                    floor.visible    = false;
+                    backWall.visible = false;
+                    state.isAR       = true;
+                    state.placed     = false;
+                    if (bedGroup) bedGroup.visible = false;
+
+                    document.getElementById('productUI').style.display  = 'none';
+                    document.getElementById('arOverlay').style.display  = 'flex';
+                    document.getElementById('arPlaceBtn').style.display = 'none';
+                    document.getElementById('arGuide').style.display    = 'block';
+                    session.addEventListener('end', endAR);
                 }).catch(function(e) {
                     hint.textContent = '⚠ AR 시작 실패: ' + (e.message || e);
                     hint.style.color = '#ff8080';
@@ -284,6 +332,8 @@
             state.isAR       = false;
             state.placed     = false;
             hitTestSource    = null;
+            hasHitTest       = false;
+            if (xrController) { scene.remove(xrController); xrController = null; }
             if (bedGroup) bedGroup.visible = true;
 
             var btn = document.getElementById('arStartBtn');
@@ -295,14 +345,7 @@
         }
 
         /* ── 이벤트 ── */
-        document.getElementById('arPlaceBtn').addEventListener('click', function() {
-            if (!reticle.visible || !bedGroup) return;
-            bedGroup.position.copy(reticle.position);
-            bedGroup.visible = true;
-            state.placed = true;
-            document.getElementById('arPlaceBtn').style.display = 'none';
-            document.getElementById('arGuide').style.display    = 'none';
-        });
+        document.getElementById('arPlaceBtn').addEventListener('click', placeBed);
 
         document.getElementById('arEndBtn').addEventListener('click', function() {
             var session = renderer.xr.getSession();
@@ -345,24 +388,32 @@
 
         /* ── 렌더 루프 ── */
         renderer.setAnimationLoop(function(time, frame) {
-            if (frame && hitTestSource) {
-                var hits = frame.getHitTestResults(hitTestSource);
-                if (hits.length > 0) {
-                    var pose = hits[0].getPose(localSpace);
-                    if (pose) {
-                        reticle.visible = true;
-                        reticle.matrix.fromArray(pose.transform.matrix);
-                        reticle.matrix.decompose(reticle.position, reticle.quaternion, reticle.scale);
-                        if (!state.placed) {
-                            document.getElementById('arPlaceBtn').style.display = 'block';
-                            document.getElementById('arGuide').style.display    = 'none';
+            if (state.isAR) {
+                /* 카메라 위치 추적 (iOS 탭-투-플레이스용) */
+                var xrCam = renderer.xr.getCamera(camera);
+                xrCam.getWorldPosition(lastCamPos);
+                xrCam.getWorldDirection(lastCamDir);
+
+                /* hit-test (Android) */
+                if (frame && hitTestSource) {
+                    var hits = frame.getHitTestResults(hitTestSource);
+                    if (hits.length > 0) {
+                        var pose = hits[0].getPose(localSpace);
+                        if (pose) {
+                            reticle.visible = true;
+                            reticle.matrix.fromArray(pose.transform.matrix);
+                            reticle.matrix.decompose(reticle.position, reticle.quaternion, reticle.scale);
+                            if (!state.placed) {
+                                document.getElementById('arPlaceBtn').style.display = 'block';
+                                document.getElementById('arGuide').style.display    = 'none';
+                            }
                         }
-                    }
-                } else {
-                    reticle.visible = false;
-                    if (!state.placed) {
-                        document.getElementById('arPlaceBtn').style.display = 'none';
-                        document.getElementById('arGuide').style.display    = 'block';
+                    } else {
+                        reticle.visible = false;
+                        if (!state.placed) {
+                            document.getElementById('arPlaceBtn').style.display = 'none';
+                            document.getElementById('arGuide').style.display    = 'block';
+                        }
                     }
                 }
             }
