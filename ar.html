@@ -70,7 +70,6 @@
     <script type="module">
         import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
         import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/controls/OrbitControls.js';
-        import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/webxr/ARButton.js';
 
         /* ── 상태 ── */
         const state = {
@@ -96,8 +95,10 @@
         renderer.xr.enabled = true;
 
         const scene  = new THREE.Scene();
+        scene.background = new THREE.Color(0x1A1816);
+
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 30);
-        camera.position.set(0, 1.6, 2.8);
+        camera.position.set(0, 1.6, 3.2);
 
         /* ── 조명 ── */
         const ambient = new THREE.AmbientLight(0xffffff, 0.7);
@@ -219,47 +220,63 @@
         let localSpace     = null;
 
         async function startAR() {
+            const btn = document.getElementById('arStartBtn');
+            const hint = document.getElementById('arHint');
+
             if (!navigator.xr) {
-                alert('이 브라우저는 AR을 지원하지 않습니다.\nAndroid Chrome 또는 iOS Safari를 사용해주세요.');
+                hint.textContent = '⚠ AR 미지원 브라우저입니다. Android Chrome 또는 Safari를 사용해주세요.';
+                hint.style.color = '#ff8080';
                 return;
             }
 
             const supported = await navigator.xr.isSessionSupported('immersive-ar').catch(() => false);
             if (!supported) {
-                alert('이 기기에서 AR을 지원하지 않습니다.\n(ARCore/ARKit 필요)');
+                hint.textContent = '⚠ 이 기기는 AR을 지원하지 않습니다. (ARCore/ARKit 필요)';
+                hint.style.color = '#ff8080';
                 return;
             }
 
-            const session = await navigator.xr.requestSession('immersive-ar', {
-                requiredFeatures: ['hit-test', 'local'],
-                optionalFeatures:  ['dom-overlay'],
-                domOverlay: { root: document.getElementById('arOverlay') }
-            });
+            btn.disabled = true;
+            btn.textContent = '카메라 시작 중...';
 
-            renderer.xr.setSession(session);
+            try {
+                const session = await navigator.xr.requestSession('immersive-ar', {
+                    requiredFeatures: ['hit-test', 'local'],
+                    optionalFeatures: ['dom-overlay'],
+                    domOverlay: { root: document.getElementById('arOverlay') }
+                });
 
-            /* 레퍼런스 스페이스 */
-            localSpace = await session.requestReferenceSpace('local');
-            const viewerSpace = await session.requestReferenceSpace('viewer');
-            hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
+                renderer.xr.setSession(session);
 
-            /* AR 중 씬 정리 */
-            floor.visible   = false;
-            reticle.visible = true;
-            state.isAR      = true;
-            state.placed    = false;
+                localSpace = await session.requestReferenceSpace('local');
+                const viewerSpace = await session.requestReferenceSpace('viewer');
+                hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
 
-            if (bedGroup) bedGroup.visible = false; // 배치 전 숨김
+                /* AR 중 씬 정리 */
+                scene.background = null;
+                floor.visible   = false;
+                reticle.visible = true;
+                state.isAR      = true;
+                state.placed    = false;
 
-            document.getElementById('productUI').style.display  = 'none';
-            document.getElementById('arOverlay').style.display  = 'flex';
-            document.getElementById('arPlaceBtn').style.display = 'none';
-            document.getElementById('arGuide').style.display    = 'block';
+                if (bedGroup) bedGroup.visible = false;
 
-            session.addEventListener('end', endAR);
+                document.getElementById('productUI').style.display  = 'none';
+                document.getElementById('arOverlay').style.display  = 'flex';
+                document.getElementById('arPlaceBtn').style.display = 'none';
+                document.getElementById('arGuide').style.display    = 'block';
+
+                session.addEventListener('end', endAR);
+            } catch (e) {
+                hint.textContent = '⚠ AR 시작 실패: ' + (e.message || e);
+                hint.style.color = '#ff8080';
+                btn.disabled = false;
+                btn.innerHTML = '<span class="ar-btn__icon">◎</span>AR로 내 방에서 보기';
+            }
         }
 
         function endAR() {
+            scene.background = new THREE.Color(0x1A1816);
             floor.visible   = true;
             reticle.visible = false;
             state.isAR      = false;
@@ -267,6 +284,10 @@
             hitTestSource   = null;
 
             if (bedGroup) { bedGroup.visible = true; }
+
+            const btn = document.getElementById('arStartBtn');
+            btn.disabled = false;
+            btn.innerHTML = '<span class="ar-btn__icon">◎</span>AR로 내 방에서 보기';
 
             document.getElementById('productUI').style.display  = 'flex';
             document.getElementById('arOverlay').style.display  = 'none';
