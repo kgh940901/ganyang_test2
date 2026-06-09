@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>투사이드 매트리스 — SENSEMOM</title>
+    <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: #FAFAF8; font-family: 'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif; color: #1A1816; }
+
+    /* 헤더 */
+    .header {
+        position: sticky; top: 0; z-index: 100;
+        background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+        border-bottom: 1px solid #ECEAE5;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 20px;
+    }
+    .header-back { font-size: 22px; color: #333; text-decoration: none; }
+    .header-brand { font-size: 14px; font-weight: 800; letter-spacing: 2px; color: #1A1816; }
+    .header-cart { font-size: 20px; color: #333; text-decoration: none; }
+
+    /* 브레드크럼 */
+    .breadcrumb { padding: 10px 20px; font-size: 11px; color: #999; }
+    .breadcrumb span { margin: 0 4px; }
+
+    /* 이미지 슬라이더 */
+    .img-slider { position: relative; background: #F2F0EC; overflow: hidden; }
+    .img-slides { display: flex; transition: transform .35s ease; }
+    .img-slide {
+        min-width: 100%; aspect-ratio: 1/1;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; color: #888; background: #F2F0EC; overflow: hidden;
+    }
+    .img-slide img { width: 100%; height: 100%; object-fit: cover; }
+    .img-dot-row {
+        position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+        display: flex; gap: 6px;
+    }
+    .img-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: rgba(0,0,0,0.25); transition: all .2s;
+    }
+    .img-dot.on { background: #1A1816; width: 18px; border-radius: 3px; }
+
+    /* 제품 정보 */
+    .prod-info { padding: 22px 20px 0; }
+    .prod-badge { display: inline-block; background: #1A1816; color: #fff; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 1px; margin-bottom: 8px; }
+    .prod-name { font-size: 22px; font-weight: 800; line-height: 1.3; margin-bottom: 6px; }
+    .prod-sub  { font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.6; }
+
+    .price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .price-orig { font-size: 13px; color: #aaa; text-decoration: line-through; }
+    .price-sale { font-size: 26px; font-weight: 800; color: #1A1816; }
+    .price-rate { font-size: 16px; font-weight: 700; color: #E05C5C; }
+    .price-note { font-size: 11px; color: #999; margin-bottom: 20px; }
+
+    /* 별점 */
+    .rating { display: flex; align-items: center; gap: 6px; margin-bottom: 20px; }
+    .stars { color: #F5C518; font-size: 14px; }
+    .rating-num { font-size: 13px; font-weight: 600; }
+    .rating-count { font-size: 12px; color: #999; }
+
+    /* 태그 */
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 24px; }
+    .tag {
+        padding: 6px 12px; border: 1px solid #E0DDD8; border-radius: 20px;
+        font-size: 11.5px; color: #555; background: #fff;
+    }
+
+    /* 옵션 */
+    .option-section { padding: 0 20px; margin-bottom: 20px; }
+    .option-title { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 10px; letter-spacing: 0.5px; }
+    .option-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .opt-chip {
+        height: 38px; padding: 0 18px; border-radius: 20px;
+        border: 1.5px solid #E0DDD8; background: #fff;
+        font-size: 13px; color: #444; cursor: pointer; transition: all .2s;
+        font-family: inherit;
+    }
+    .opt-chip:hover { border-color: #1A1816; color: #1A1816; }
+    .opt-chip.on { border-color: #1A1816; background: #1A1816; color: #fff; font-weight: 700; }
+
+    /* 특징 */
+    .features { padding: 0 20px 24px; }
+    .feature-item {
+        display: flex; align-items: flex-start; gap: 14px;
+        padding: 14px 0; border-bottom: 1px solid #F0EDE8;
+    }
+    .feature-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .feature-text h4 { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .feature-text p  { font-size: 12px; color: #777; line-height: 1.5; }
+
+    /* 하단 고정 버튼 */
+    .bottom-bar {
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+        background: #fff; border-top: 1px solid #ECEAE5;
+        padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+        display: flex; flex-direction: column; gap: 8px;
+    }
+
+    /* AR 배치 버튼 (핵심!) */
+    .ar-launch-btn {
+        width: 100%; height: 52px;
+        background: #1A1816; color: #fff;
+        border: none; border-radius: 12px;
+        font-size: 15px; font-weight: 700; font-family: inherit;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        gap: 10px; transition: all .2s; text-decoration: none;
+        box-shadow: 0 4px 16px rgba(26,24,22,0.25);
+    }
+    .ar-launch-btn:hover { background: #333; }
+    .ar-launch-btn:active { transform: scale(0.98); }
+    .ar-icon { font-size: 18px; }
+
+    .buy-now-btn {
+        width: 100%; height: 48px;
+        background: #fff; color: #1A1816;
+        border: 1.5px solid #1A1816; border-radius: 12px;
+        font-size: 14px; font-weight: 600; font-family: inherit;
+        cursor: pointer; transition: all .2s; text-decoration: none;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .buy-now-btn:hover { background: #F5F3F0; }
+
+    /* 스크롤 여백 */
+    .scroll-pad { height: 140px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a class="header-back" href="index.html">←</a>
+        <span class="header-brand">SENSEMOM</span>
+        <a class="header-cart" href="https://sensemom.com" target="_blank">🛒</a>
+    </div>
+
+    <div class="breadcrumb">침구 <span>›</span> 매트리스 <span>›</span> 투사이드</div>
+
+    <!-- 이미지 슬라이더 -->
+    <div class="img-slider" id="slider">
+        <div class="img-slides" id="slides">
+            <div class="img-slide" style="background:#EDE8E0;">
+                <svg width="80%" height="80%" viewBox="0 0 400 300" fill="none">
+                    <!-- 침대 일러스트 SVG -->
+                    <rect x="40" y="140" width="320" height="110" rx="6" fill="#5A4838"/>
+                    <rect x="44" y="80" width="316" height="60" rx="5" fill="#F0EBE3"/>
+                    <rect x="44" y="130" width="316" height="8" rx="2" fill="#A8BFD0"/>
+                    <rect x="44" y="138" width="316" height="60" rx="4" fill="#EAE4DC"/>
+                    <rect x="50" y="176" width="300" height="55" rx="4" fill="#F5F2EE"/>
+                    <rect x="50" y="170" width="130" height="40" rx="4" fill="#F8F5F0"/>
+                    <rect x="200" y="170" width="150" height="40" rx="4" fill="#F5F2EE"/>
+                    <rect x="40" y="248" width="320" height="6" rx="2" fill="#3A2E24"/>
+                    <text x="200" y="285" text-anchor="middle" fill="#888" font-size="13" font-family="sans-serif">투사이드 매트리스</text>
+                </svg>
+            </div>
+            <div class="img-slide" style="background:#F5F2EE; flex-direction:column; gap:12px;">
+                <div style="font-size:14px;color:#666;padding:20px;text-align:center;line-height:1.8">
+                    <strong style="font-size:18px;color:#1A1816;display:block;margin-bottom:8px">양면 사용 가능</strong>
+                    소프트면 · 하드면<br>취향에 맞게 뒤집어 사용
+                </div>
+                <div style="display:flex;gap:8px;padding:0 20px">
+                    <div style="flex:1;padding:14px;background:#fff;border-radius:10px;text-align:center;font-size:12px">
+                        <div style="font-size:22px;margin-bottom:4px">☁️</div>소프트면<br><small style="color:#888">부드러운 수면</small>
+                    </div>
+                    <div style="flex:1;padding:14px;background:#fff;border-radius:10px;text-align:center;font-size:12px">
+                        <div style="font-size:22px;margin-bottom:4px">💪</div>하드면<br><small style="color:#888">탄탄한 지지력</small>
+                    </div>
+                </div>
+            </div>
+            <div class="img-slide" style="background:#EAE4DC; flex-direction:column; justify-content:center; gap:6px; padding:30px;">
+                <div style="font-size:13px;color:#888;letter-spacing:1px">THICKNESS</div>
+                <div style="font-size:48px;font-weight:800;color:#1A1816">12<small style="font-size:20px">cm</small></div>
+                <div style="font-size:13px;color:#555;line-height:1.7">포켓 스프링 + 메모리폼<br>이중 구조로 최적의 지지력</div>
+            </div>
+        </div>
+        <div class="img-dot-row" id="dotRow">
+            <div class="img-dot on"></div>
+            <div class="img-dot"></div>
+            <div class="img-dot"></div>
+        </div>
+    </div>
+
+    <!-- 제품 정보 -->
+    <div class="prod-info">
+        <div class="prod-badge">BEST SELLER</div>
+        <div class="prod-name">투사이드 매트리스</div>
+        <div class="prod-sub">탄탄한 지지력 · 양면 사용(소프트&amp;하드) · 12cm</div>
+        <div class="price-row">
+            <span class="price-orig">338,000원</span>
+            <span class="price-sale">179,000원</span>
+            <span class="price-rate">47%</span>
+        </div>
+        <div class="price-note">무료배송 · 최대 12개월 무이자 할부</div>
+        <div class="rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-num">4.8</span>
+            <span class="rating-count">(리뷰 2,847개)</span>
+        </div>
+        <div class="tags">
+            <span class="tag">양면 사용</span>
+            <span class="tag">소프트&amp;하드</span>
+            <span class="tag">12cm</span>
+            <span class="tag">포켓스프링</span>
+            <span class="tag">메모리폼</span>
+        </div>
+    </div>
+
+    <!-- 사이즈 옵션 -->
+    <div class="option-section">
+        <div class="option-title">사이즈 선택</div>
+        <div class="option-chips" id="sizeOpts">
+            <button class="opt-chip" data-size="ss" onclick="selectSize(this)">싱글 (100×200)</button>
+            <button class="opt-chip on" data-size="ss" onclick="selectSize(this)">슈퍼싱글 (110×200)</button>
+            <button class="opt-chip" data-size="q" onclick="selectSize(this)">퀸 (152×200)</button>
+            <button class="opt-chip" data-size="k" onclick="selectSize(this)">킹 (180×200)</button>
+        </div>
+    </div>
+
+    <!-- 특징 -->
+    <div class="features">
+        <div class="feature-item">
+            <div class="feature-icon">🔄</div>
+            <div class="feature-text">
+                <h4>양면 사용 설계</h4>
+                <p>소프트면과 하드면을 뒤집어 사용할 수 있어 두 가지 수면감을 경험할 수 있어요.</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🛡️</div>
+            <div class="feature-text">
+                <h4>포켓 스프링 + 메모리폼</h4>
+                <p>포켓 스프링의 탄탄한 지지력과 메모리폼의 압력 분산이 조화를 이룹니다.</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🌬️</div>
+            <div class="feature-text">
+                <h4>우수한 통기성</h4>
+                <p>에어 채널 구조로 쾌적한 수면 환경을 유지해드립니다.</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🚚</div>
+            <div class="feature-text">
+                <h4>무료 배송 · 수거</h4>
+                <p>전국 무료 배송이며, 100일 체험 후 맞지 않으면 무료 수거해드립니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-pad"></div>
+
+    <!-- 하단 고정 버튼 -->
+    <div class="bottom-bar">
+        <!-- AR 배치 버튼 -->
+        <a id="arBtn" href="ar.html?prod=twoside&size=ss" class="ar-launch-btn">
+            <span class="ar-icon">📷</span>
+            이 상품을 카메라(AR)로 배치해보기
+        </a>
+        <a href="https://sensemom.com" target="_blank" class="buy-now-btn">
+            sensemom.com에서 구매하기
+        </a>
+    </div>
+
+    <script>
+    /* 슬라이더 */
+    var slideIdx = 0;
+    var slides   = document.getElementById('slides');
+    var dots     = document.querySelectorAll('.img-dot');
+    var startX   = 0;
+
+    document.getElementById('slider').addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+    }, { passive: true });
+    document.getElementById('slider').addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) { slideIdx += dx < 0 ? 1 : -1; goSlide(); }
+    }, { passive: true });
+
+    function goSlide() {
+        slideIdx = Math.max(0, Math.min(dots.length - 1, slideIdx));
+        slides.style.transform = 'translateX(-' + slideIdx * 100 + '%)';
+        dots.forEach(function(d, i) { d.classList.toggle('on', i === slideIdx); });
+    }
+
+    /* 사이즈 선택 */
+    var selSize = 'ss';
+    function selectSize(el) {
+        document.querySelectorAll('.opt-chip').forEach(function(b) { b.classList.remove('on'); });
+        el.classList.add('on');
+        selSize = el.dataset.size;
+        document.getElementById('arBtn').href = 'ar.html?prod=twoside&size=' + selSize;
+    }
+    </script>
+</body>
+</html>
