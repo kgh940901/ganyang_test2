@@ -192,7 +192,7 @@ function hexRGB(h){ return { r:(h>>16)&0xff, g:(h>>8)&0xff, b:h&0xff }; }
    - 모서리 음영
    - SENSEMOM 우측하단 대각 태그 */
 function makeMeshFabricTex(hex) {
-    var S = 1024;
+    var S = 512;
     var cv = document.createElement('canvas');
     cv.width = cv.height = S;
     var ctx = cv.getContext('2d');
@@ -570,9 +570,36 @@ function createBed(prodKey, sizeKey, beddingHex) {
     return g;
 }
 
+/* 그룹의 모든 geometry/material/texture 해제 (메모리 누수 방지) */
+function disposeGroup(grp){
+    grp.traverse(function(o){
+        if(o.geometry) o.geometry.dispose();
+        if(o.material){
+            var mats = Array.isArray(o.material) ? o.material : [o.material];
+            mats.forEach(function(m){
+                if(m.map)       m.map.dispose();
+                if(m.normalMap) m.normalMap.dispose();
+                m.dispose();
+            });
+        }
+    });
+}
+
 function updateBed(){
-    if(bedGroup){ var ry=bedGroup.rotation.y,px=bedGroup.position.x,pz=bedGroup.position.z; scene.remove(bedGroup); bedGroup=createBed(state.prod,state.size,state.bedding); bedGroup.rotation.y=ry; if(state.placed){bedGroup.position.x=px;bedGroup.position.z=pz;} }
-    else bedGroup=createBed(state.prod,state.size,state.bedding);
+    var ry=0, px=0, pz=0;
+    /* 씬에 남아있는 '모든' 매트리스 그룹을 강제로 제거 (겹침 방지) */
+    for(var i=scene.children.length-1; i>=0; i--){
+        var c=scene.children[i];
+        if(c.userData && c.userData.isBed){
+            ry=c.rotation.y; px=c.position.x; pz=c.position.z;
+            scene.remove(c);
+            disposeGroup(c);
+        }
+    }
+    bedGroup = createBed(state.prod, state.size, state.bedding);
+    bedGroup.userData.isBed = true;
+    bedGroup.rotation.y = ry;
+    if(state.placed){ bedGroup.position.x=px; bedGroup.position.z=pz; }
     scene.add(bedGroup);
 }
 
