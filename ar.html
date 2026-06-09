@@ -129,9 +129,9 @@ var PRODUCTS = {
     /* 투사이드 바닥 매트리스 : 차콜 그레이, 메쉬 패브릭, 프레임 없음 */
     twoside: {
         h: 0.07,
-        type: 'floor',        /* 바닥 매트리스 */
-        topHex:  0x5C6472,    /* 블루-차콜 그레이 */
-        sideHex: 0x22252C,    /* 거의 블랙에 가까운 다크 사이드 */
+        type: 'floor',        /* 바닥 매트리스 (얇음) */
+        topHex:  0x6A7486,    /* 밝은 블루-그레이 */
+        sideHex: 0x20232A,
         tag: 'SENSE MOM',
         accentLine: false,
         hasBand: false, bandHex: 0,
@@ -139,12 +139,12 @@ var PRODUCTS = {
         topImage:  'images/twoside_top.png',
         sideImage: 'images/twoside_side.png'
     },
-    /* 시그니처 더나인s : 진한 슬레이트 + 윗면 흰색 액센트 라인 + THE9 라벨 */
+    /* 시그니처 더나인s : 진한 슬레이트 + 윗면 흰색 라인 + THE9 라벨 (두꺼움) */
     signature: {
         h: 0.12,
         type: 'floor',
-        topHex:  0x434956,    /* 투사이드보다 더 진한 슬레이트 (구분용) */
-        sideHex: 0x2A2D36,
+        topHex:  0x3A3F4B,    /* 확실히 더 진한 슬레이트 */
+        sideHex: 0x23262E,
         tag: 'THE 9',
         accentLine: true,
         hasBand: false, bandHex: 0,
@@ -246,13 +246,15 @@ function makeMeshFabricTex(hex, opts) {
         ctx.fillStyle=g; ctx.fillRect(e[0],e[1],e[2],e[3]);
     });
 
-    /* ⑤ 흰색 액센트 라인 (시그니처 더나인s 제품 특징) */
+    /* ⑤ 흰색 액센트 라인 (시그니처 더나인s 제품 특징) — 윗면 가로 2줄 */
     if (accentLine) {
-        var ly = S * 0.72;
-        ctx.fillStyle = 'rgba(255,255,255,0.85)';
-        ctx.fillRect(S*0.06, ly, S*0.88, 3);
-        ctx.fillStyle = 'rgba(255,255,255,0.25)';
-        ctx.fillRect(S*0.06, ly+3, S*0.88, 1);
+        [S*0.30, S*0.70].forEach(function(ly){
+            ctx.fillStyle = 'rgba(255,255,255,0.92)';
+            ctx.fillRect(0, ly, S, 5);
+            ctx.fillStyle = 'rgba(0,0,0,0.18)';
+            ctx.fillRect(0, ly+5, S, 1);
+            ctx.fillRect(0, ly-1, S, 1);
+        });
     }
 
     /* ⑥ 모서리 대각 태그 (제품별 텍스트) */
