@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전체 상품 — SENSEMOM</title>
+    <link rel="stylesheet" href="css/products.css">
+</head>
+<body>
+
+    <!-- 타이틀 -->
+    <section class="ph">
+        <div class="ph__inner">
+            <p class="ph__brand">SENSEMOM</p>
+            <h1 class="ph__title">전체 상품 한눈에 보기</h1>
+            <p class="ph__sub">원하는 카테고리를 선택하고 상품을 확인해보세요</p>
+        </div>
+    </section>
+
+    <!-- 카테고리 필터 -->
+    <nav class="filter" id="filterNav">
+        <div class="filter__inner">
+            <button class="filter__btn is-on" data-cat="all">전체</button>
+            <button class="filter__btn" data-cat="mattress">매트리스</button>
+            <button class="filter__btn" data-cat="topper">토퍼</button>
+            <button class="filter__btn" data-cat="bedding">이불</button>
+            <button class="filter__btn" data-cat="pillow">필로우</button>
+            <button class="filter__btn" data-cat="set">세트상품</button>
+            <button class="filter__btn" data-cat="etc">기타용품</button>
+        </div>
+    </nav>
+
+    <!-- 제품 그리드 -->
+    <main class="catalog">
+        <div class="catalog__inner">
+            <div class="catalog__count" id="catalogCount">전체 상품</div>
+            <div class="catalog__grid" id="catalogGrid">
+                <!-- JS로 렌더링 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 하단 링크 -->
+    <footer class="pf">
+        <div class="pf__inner">
+            <a class="pf__link" href="index.html">← 소파 바닥매트 시뮬레이터</a>
+            <a class="pf__link pf__link--main" href="https://sensemom.com/" target="_blank">sensemom.com 방문하기 →</a>
+        </div>
+    </footer>
+
+    <script src="js/products.js"></script>
+</body>
+</html>
