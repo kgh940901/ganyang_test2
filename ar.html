@@ -130,22 +130,24 @@ var PRODUCTS = {
     twoside: {
         h: 0.07,
         type: 'floor',        /* 바닥 매트리스 */
-        topHex:  0x5C6472,    /* 실제 제품색: 블루-차콜 그레이 */
+        topHex:  0x5C6472,    /* 블루-차콜 그레이 */
         sideHex: 0x22252C,    /* 거의 블랙에 가까운 다크 사이드 */
-        hasBand: true,
-        bandHex: 0x4A5260,    /* 양면 구분 밴드 (살짝 다른 그레이) */
+        tag: 'SENSE MOM',
+        accentLine: false,
+        hasBand: false, bandHex: 0,
         hasFold: false,
-        topImage:  'images/twoside_top.png',   /* 실제 제품 윗면 사진 (있으면 사용) */
-        sideImage: 'images/twoside_side.png'   /* 실제 제품 옆면 사진 (선택) */
+        topImage:  'images/twoside_top.png',
+        sideImage: 'images/twoside_side.png'
     },
-    /* 시그니처 더나인s 바닥 매트리스 : 슬레이트 그레이 + 흰색 액센트 라인 */
+    /* 시그니처 더나인s : 진한 슬레이트 + 윗면 흰색 액센트 라인 + THE9 라벨 */
     signature: {
         h: 0.12,
         type: 'floor',
-        topHex:  0x4E5460,    /* 슬레이트 그레이 */
-        sideHex: 0x363A44,    /* 약간 더 어두운 사이드 */
-        hasBand: true,
-        bandHex: 0xC8CDD5,    /* 흰색 액센트 라인 */
+        topHex:  0x434956,    /* 투사이드보다 더 진한 슬레이트 (구분용) */
+        sideHex: 0x2A2D36,
+        tag: 'THE 9',
+        accentLine: true,
+        hasBand: false, bandHex: 0,
         hasFold: false,
         topImage:  'images/signature_top.png',
         sideImage: 'images/signature_side.png'
@@ -191,7 +193,10 @@ function hexRGB(h){ return { r:(h>>16)&0xff, g:(h>>8)&0xff, b:h&0xff }; }
    - 가로×세로 격자 메쉬
    - 모서리 음영
    - SENSEMOM 우측하단 대각 태그 */
-function makeMeshFabricTex(hex) {
+function makeMeshFabricTex(hex, opts) {
+    opts = opts || {};
+    var tagText    = opts.tag || 'SENSE MOM';   /* 모서리 라벨 텍스트 */
+    var accentLine = opts.accentLine || false;  /* 윗면 흰색 가로 라인 (시그니처) */
     var S = 512;
     var cv = document.createElement('canvas');
     cv.width = cv.height = S;
@@ -241,21 +246,28 @@ function makeMeshFabricTex(hex) {
         ctx.fillStyle=g; ctx.fillRect(e[0],e[1],e[2],e[3]);
     });
 
-    /* ⑤ SENSEMOM 대각 태그 (우측 하단, 실제 제품 위치) */
+    /* ⑤ 흰색 액센트 라인 (시그니처 더나인s 제품 특징) */
+    if (accentLine) {
+        var ly = S * 0.72;
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.fillRect(S*0.06, ly, S*0.88, 3);
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.fillRect(S*0.06, ly+3, S*0.88, 1);
+    }
+
+    /* ⑥ 모서리 대각 태그 (제품별 텍스트) */
     ctx.save();
     ctx.translate(S - 52, S - 38);
     ctx.rotate(-Math.PI / 4);
-    /* 태그 배경 */
     ctx.fillStyle = '#111318';
     ctx.beginPath();
     ctx.rect(-4, -7, 68, 14);
     ctx.fill();
-    /* 태그 텍스트 */
-    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.fillStyle = 'rgba(255,255,255,0.78)';
     ctx.font = 'bold 7px -apple-system, Arial, sans-serif';
     ctx.letterSpacing = '1px';
-    ctx.textAlign = 'left';
-    ctx.fillText('  SENSE MOM', 0, 2);
+    ctx.textAlign = 'center';
+    ctx.fillText(tagText, 30, 2);
     ctx.restore();
 
     var t = new THREE.CanvasTexture(cv);
@@ -456,7 +468,7 @@ function createBed(prodKey, sizeKey, beddingHex) {
            - 차콜 그레이 탑 + 다크 사이드
            - 모서리는 살짝 챔퍼(chamfer) 처리된 느낌 */
 
-        var topTex  = makeMeshFabricTex(p.topHex);
+        var topTex  = makeMeshFabricTex(p.topHex, { tag:p.tag, accentLine:p.accentLine });
         var topNorm = makeNormalFrom(topTex.image, 1.5);
         topNorm.encoding = THREE.LinearEncoding;
         var sideTex = makeDarkSideTex(p.sideHex);
