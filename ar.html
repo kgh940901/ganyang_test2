@@ -51,6 +51,14 @@
     </div>
 
     <div class="ui-section">
+        <p class="ui-label">배치</p>
+        <div class="ui-chips" id="baseChips">
+            <button class="chip is-on" data-base="floor">바닥</button>
+            <button class="chip" data-base="bed">침대 위</button>
+        </div>
+    </div>
+
+    <div class="ui-section">
         <p class="ui-label">스타일링</p>
         <div class="ui-chips" id="stylingChips">
             <button class="chip is-on" data-style="full">침구 포함</button>
@@ -188,6 +196,7 @@ var urlP  = new URLSearchParams(window.location.search);
 var state = { prod:urlP.get('prod')||'twoside', size:urlP.get('size')||'ss',
               bedding:0xF5F2EE, floor:'wood', wall:'white',
               styling:'full',   /* 'full' = 침구 포함, 'bare' = 매트리스만 */
+              base:'floor',     /* 'floor' = 바닥, 'bed' = 침대 위 */
               isAR:false, placed:false, rotDeg:0 };
 
 /* ══════════════════════════════════════════
@@ -638,6 +647,37 @@ function createBed(prodKey, sizeKey, beddingHex) {
         }
     }
 
+    /* ── 침대 위 배치: 바닥 매트리스를 프레임 위로 올림 ── */
+    if (p.type === 'floor' && state.base === 'bed') {
+        var frameH = 0.30;
+        /* 기존 매트리스/침구 전체를 프레임 높이만큼 위로 */
+        for (var ci = 0; ci < g.children.length; ci++) {
+            g.children[ci].position.y += frameH;
+        }
+        /* 침대 프레임(베이스) 추가 */
+        var legH = 0.09, boxH = frameH - legH;
+        var baseMat = new THREE.MeshStandardMaterial({ color:0x9A9286, roughness:0.85, metalness:0, envMapIntensity:0.4 });
+        var baseBox = new THREE.Mesh(new THREE.BoxGeometry(sz.w + 0.12, boxH, sz.l + 0.12), baseMat);
+        baseBox.position.y = legH + boxH/2;
+        baseBox.castShadow = baseBox.receiveShadow = true;
+        g.add(baseBox);
+        /* 헤드보드 */
+        var hbMat3 = new THREE.MeshStandardMaterial({ color:0x6A5040, roughness:0.6, envMapIntensity:0.4 });
+        var hbH3 = 0.55;
+        var hb3 = new THREE.Mesh(new THREE.BoxGeometry(sz.w + 0.12, hbH3, 0.08), hbMat3);
+        hb3.position.set(0, frameH + hbH3/2, -sz.l/2 - 0.10);
+        hb3.castShadow = true;
+        g.add(hb3);
+        /* 다리 4개 */
+        var legMat3 = new THREE.MeshStandardMaterial({ color:0x3A2E24, roughness:0.6, metalness:0.1 });
+        [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(s){
+            var leg = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.022, legH, 10), legMat3);
+            leg.position.set(s[0]*(sz.w/2), legH/2, s[1]*(sz.l/2));
+            leg.castShadow = true;
+            g.add(leg);
+        });
+    }
+
     return g;
 }
 
@@ -768,6 +808,7 @@ document.getElementById('arResetBtn').addEventListener('click',function(){if(bed
 document.getElementById('prodTabs').addEventListener('click',function(e){var t=e.target.closest('.prod-tab');if(!t)return;document.querySelectorAll('.prod-tab').forEach(function(b){b.classList.remove('is-on');});t.classList.add('is-on');state.prod=t.dataset.prod;updateBed();});
 document.getElementById('sizeChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('#sizeChips .chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.size=b.dataset.size;updateBed();});
 document.getElementById('stylingChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('#stylingChips .chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.styling=b.dataset.style;document.getElementById('beddingSection').style.display=(state.styling==='full')?'':'none';updateBed();});
+document.getElementById('baseChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('#baseChips .chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.base=b.dataset.base;updateBed();});
 document.getElementById('colorChips').addEventListener('click',function(e){var b=e.target.closest('.color-chip');if(!b)return;document.querySelectorAll('.color-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.bedding=parseInt(b.dataset.color.replace('#',''),16);document.getElementById('colorName').textContent=b.dataset.name;updateBed();});
 document.getElementById('floorChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#floorChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.floor=b.dataset.key;var nt=makeWoodTex(FLOOR_HEX[state.floor]);floorMesh.material.map=nt;floorMesh.material.needsUpdate=true;});
 document.getElementById('wallChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#wallChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.wall=b.dataset.key;backWallMesh.material.color.setHex(WALL_HEX[state.wall]);sideWallMesh.material.color.setHex(WALL_HEX[state.wall]);});
