@@ -275,9 +275,9 @@ function makeMeshFabricTex(hex, opts) {
         ctx.fillStyle = 'rgba(43,47,56,0.55)';
         ctx.fillText('시그니처 더나인', lx + lw/2, lyy + 30);
     } else {
-        /* ━━ 투사이드 : 어두운 대각 SENSE MOM 코너 태그 ━━ */
+        /* ━━ 투사이드 : 어두운 대각 SENSE MOM 코너 태그 (앞 모서리 오른쪽) ━━ */
         ctx.save();
-        ctx.translate(S - 52, S - 38);
+        ctx.translate(S - 50, S - 20);
         ctx.rotate(-Math.PI / 4);
         ctx.fillStyle = '#111318';
         ctx.beginPath();
