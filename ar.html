@@ -165,13 +165,18 @@ var PRODUCTS = {
         topImage:  'images/zip_top.png',
         sideImage: 'images/zip_side.png'
     },
+    /* 베이직 : 차콜 그레이 + 가운데 3색 SENSE MOM 띠 */
     basic: {
         h: 0.07,
         type: 'floor',
-        topHex:  0xF5F1EA,
-        sideHex: 0xE5E1D8,
+        topHex:  0x474C55,    /* 차콜 그레이 */
+        sideHex: 0x2A2D34,
+        senseBand: true,
+        accentLine: false, the9Label: false, cornerTag: false,
         hasBand: false, bandHex: 0,
-        hasFold: false
+        hasFold: false,
+        topImage:  'images/basic_top.png',
+        sideImage: 'images/basic_side.png'
     }
 };
 
@@ -204,6 +209,7 @@ function makeMeshFabricTex(hex, opts) {
     var accentLine = opts.accentLine || false;  /* 윗면 흰색 가로 라인 */
     var the9Label  = opts.the9Label || false;   /* 흰색 THE9 라벨 (시그니처) */
     var cornerTag  = opts.cornerTag || false;   /* 어두운 대각 코너 태그 (투사이드) */
+    var senseBand  = opts.senseBand || false;   /* 3색 SENSE MOM 띠 (베이직) */
     var S = 512;
     var cv = document.createElement('canvas');
     cv.width = cv.height = S;
@@ -252,6 +258,30 @@ function makeMeshFabricTex(hex, opts) {
         g.addColorStop(0,'rgba(0,0,0,0.18)'); g.addColorStop(1,'rgba(0,0,0,0)');
         ctx.fillStyle=g; ctx.fillRect(e[0],e[1],e[2],e[3]);
     });
+
+    /* ── 3색 SENSE MOM 띠 (베이직) ── */
+    if (senseBand) {
+        var bTop = S * 0.44;
+        var h1 = S*0.035, h2 = S*0.052, h3 = S*0.030;
+        /* 블루그레이 스트라이프 */
+        ctx.fillStyle = '#6E7E9E';
+        ctx.fillRect(0, bTop, S, h1);
+        /* 흰색 스트라이프 + SENSE MOM 반복 텍스트 */
+        var wy = bTop + h1;
+        ctx.fillStyle = '#F2F2F0';
+        ctx.fillRect(0, wy, S, h2);
+        ctx.fillStyle = '#3A3F48';
+        ctx.font = 'bold 11px Arial, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        for (var tx = 6; tx < S; tx += 132) {
+            ctx.fillText('SENSE MOM', tx, wy + h2/2 + 1);
+        }
+        ctx.textBaseline = 'alphabetic';
+        /* 청록(시안) 스트라이프 */
+        ctx.fillStyle = '#36C4E6';
+        ctx.fillRect(0, wy + h2, S, h3);
+    }
 
     /* ── 흰색 가로 라인 (시그니처 / 접이식) ── */
     if (accentLine) {
@@ -497,7 +527,7 @@ function createBed(prodKey, sizeKey, beddingHex) {
            - 차콜 그레이 탑 + 다크 사이드
            - 모서리는 살짝 챔퍼(chamfer) 처리된 느낌 */
 
-        var topTex  = makeMeshFabricTex(p.topHex, { tag:p.tag, accentLine:p.accentLine, the9Label:p.the9Label, cornerTag:p.cornerTag });
+        var topTex  = makeMeshFabricTex(p.topHex, { tag:p.tag, accentLine:p.accentLine, the9Label:p.the9Label, cornerTag:p.cornerTag, senseBand:p.senseBand });
         var topNorm = makeNormalFrom(topTex.image, 1.5);
         topNorm.encoding = THREE.LinearEncoding;
         var sideTex = makeDarkSideTex(p.sideHex);
