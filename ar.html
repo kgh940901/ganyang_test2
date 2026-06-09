@@ -246,31 +246,49 @@ function makeMeshFabricTex(hex, opts) {
         ctx.fillStyle=g; ctx.fillRect(e[0],e[1],e[2],e[3]);
     });
 
-    /* ⑤ 흰색 액센트 라인 (시그니처 더나인s 제품 특징) — 윗면 가로 2줄 */
     if (accentLine) {
-        [S*0.30, S*0.70].forEach(function(ly){
-            ctx.fillStyle = 'rgba(255,255,255,0.92)';
-            ctx.fillRect(0, ly, S, 5);
-            ctx.fillStyle = 'rgba(0,0,0,0.18)';
-            ctx.fillRect(0, ly+5, S, 1);
-            ctx.fillRect(0, ly-1, S, 1);
-        });
-    }
+        /* ━━ 시그니처 더나인s : 흰색 가로 라인 1줄 + 흰색 THE9 라벨 ━━ */
+        var ly = S * 0.74;
+        /* 흰색 라인 (얇고 깔끔하게) */
+        ctx.fillStyle = 'rgba(238,239,242,0.95)';
+        ctx.fillRect(0, ly, S, 3);
+        ctx.fillStyle = 'rgba(0,0,0,0.10)';
+        ctx.fillRect(0, ly+3, S, 1);
+        ctx.fillRect(0, ly-1, S, 1);
 
-    /* ⑥ 모서리 대각 태그 (제품별 텍스트) */
-    ctx.save();
-    ctx.translate(S - 52, S - 38);
-    ctx.rotate(-Math.PI / 4);
-    ctx.fillStyle = '#111318';
-    ctx.beginPath();
-    ctx.rect(-4, -7, 68, 14);
-    ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.78)';
-    ctx.font = 'bold 7px -apple-system, Arial, sans-serif';
-    ctx.letterSpacing = '1px';
-    ctx.textAlign = 'center';
-    ctx.fillText(tagText, 30, 2);
-    ctx.restore();
+        /* 흰색 사각 라벨 (라인 위, 우측) */
+        var lw = 52, lh = 34;
+        var lx = S * 0.64, lyy = ly - lh + 4;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(lx, lyy, lw, lh);
+        ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(lx + 0.5, lyy + 0.5, lw - 1, lh - 1);
+        /* THE 9 로고 */
+        ctx.fillStyle = '#2B2F38';
+        ctx.textAlign = 'center';
+        ctx.font = '4px Arial, sans-serif';
+        ctx.fillText('SIGNATURE', lx + lw/2, lyy + 10);
+        ctx.font = 'bold 14px Arial, sans-serif';
+        ctx.fillText('THE 9', lx + lw/2, lyy + 23);
+        ctx.font = '4px Arial, sans-serif';
+        ctx.fillStyle = 'rgba(43,47,56,0.55)';
+        ctx.fillText('시그니처 더나인', lx + lw/2, lyy + 30);
+    } else {
+        /* ━━ 투사이드 : 어두운 대각 SENSE MOM 코너 태그 ━━ */
+        ctx.save();
+        ctx.translate(S - 52, S - 38);
+        ctx.rotate(-Math.PI / 4);
+        ctx.fillStyle = '#111318';
+        ctx.beginPath();
+        ctx.rect(-4, -7, 68, 14);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.78)';
+        ctx.font = 'bold 7px -apple-system, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(tagText, 30, 2);
+        ctx.restore();
+    }
 
     var t = new THREE.CanvasTexture(cv);
     t.encoding = THREE.sRGBEncoding;
