@@ -8,629 +8,727 @@
 </head>
 <body>
 
-    <canvas id="arCanvas"></canvas>
+<canvas id="arCanvas"></canvas>
 
-    <!-- ── 제품 선택 UI (3D 미리보기 모드) ── -->
-    <div id="productUI">
-        <div class="ui-header">
-            <a class="ui-back" id="backBtn" href="product.html">←</a>
-            <div class="ui-brand">
-                <span class="brand-name">SENSEMOM</span>
-                <span class="brand-sub">AR 뷰어</span>
-            </div>
+<!-- ── 제품 선택 패널 ── -->
+<div id="productUI">
+    <div class="ui-header">
+        <a class="ui-back" href="product.html">←</a>
+        <div class="ui-brand">
+            <span class="brand-name">SENSEMOM</span>
+            <span class="brand-sub">AR 뷰어</span>
         </div>
+    </div>
 
-        <div class="ui-section">
-            <p class="ui-label">매트리스 선택</p>
-            <div class="prod-tabs" id="prodTabs">
-                <button class="prod-tab is-on" data-prod="twoside">
-                    <span class="pt-name">투사이드</span>
-                    <span class="pt-spec">양면 · 12cm</span>
-                    <span class="pt-price">179,000원</span>
-                </button>
-                <button class="prod-tab" data-prod="signature">
-                    <span class="pt-name">시그니처 더나인s</span>
-                    <span class="pt-spec">균형 지지 · 12cm</span>
-                    <span class="pt-price">129,000원</span>
-                </button>
-                <button class="prod-tab" data-prod="zip">
-                    <span class="pt-name">ZIP 접이식</span>
-                    <span class="pt-spec">3단 접이 · 8cm</span>
-                    <span class="pt-price">59,000원</span>
-                </button>
-                <button class="prod-tab" data-prod="basic">
-                    <span class="pt-name">베이직</span>
-                    <span class="pt-spec">실속형 · 7cm</span>
-                    <span class="pt-price">79,000원</span>
-                </button>
-            </div>
-        </div>
-
-        <div class="ui-section">
-            <p class="ui-label">사이즈</p>
-            <div class="ui-chips" id="sizeChips">
-                <button class="chip is-on" data-size="ss">슈퍼싱글</button>
-                <button class="chip" data-size="q">퀸</button>
-                <button class="chip" data-size="k">킹</button>
-            </div>
-        </div>
-
-        <div class="ui-section">
-            <p class="ui-label">침구 색상</p>
-            <div class="ui-colors" id="colorChips">
-                <button class="color-chip is-on" data-color="#F5F2EE" data-name="화이트" style="background:#F5F2EE"></button>
-                <button class="color-chip" data-color="#E5DEC8" data-name="아이보리" style="background:#E5DEC8"></button>
-                <button class="color-chip" data-color="#C9A882" data-name="베이지" style="background:#C9A882"></button>
-                <button class="color-chip" data-color="#B0B0B0" data-name="그레이" style="background:#B0B0B0"></button>
-                <button class="color-chip" data-color="#8BA8C8" data-name="블루" style="background:#8BA8C8"></button>
-                <button class="color-chip" data-color="#283A52" data-name="네이비" style="background:#283A52"></button>
-            </div>
-            <p class="ui-color-name" id="colorName">화이트</p>
-        </div>
-
-        <div id="arSection">
-            <a id="buyBtn" class="buy-btn" href="https://sensemom.com" target="_blank">sensemom.com 구매하기 →</a>
-            <button id="arStartBtn" class="ar-btn">
-                <span class="ar-btn__icon">◎</span>
-                이 상품을 카메라(AR)로 배치해보기
+    <!-- 제품 -->
+    <div class="ui-section">
+        <p class="ui-label">매트리스</p>
+        <div class="prod-tabs" id="prodTabs">
+            <button class="prod-tab is-on" data-prod="twoside">
+                <span class="pt-name">투사이드</span>
+                <span class="pt-spec">양면 · 12cm</span>
             </button>
-            <p class="ar-hint" id="arHint">Android Chrome · iPhone Safari(iOS 16+)</p>
+            <button class="prod-tab" data-prod="signature">
+                <span class="pt-name">시그니처 더나인s</span>
+                <span class="pt-spec">균형 지지 · 12cm</span>
+            </button>
+            <button class="prod-tab" data-prod="zip">
+                <span class="pt-name">ZIP 접이식</span>
+                <span class="pt-spec">3단 접이 · 8cm</span>
+            </button>
+            <button class="prod-tab" data-prod="basic">
+                <span class="pt-name">베이직</span>
+                <span class="pt-spec">실속형 · 7cm</span>
+            </button>
         </div>
     </div>
 
-    <!-- ── AR 오버레이 ── -->
-    <div id="arOverlay" style="display:none">
-
-        <!-- 상단 가이드 -->
-        <div class="ar-guide-wrap">
-            <div class="ar-guide" id="arGuide">바닥을 향해 카메라를 천천히 움직여주세요</div>
+    <!-- 사이즈 -->
+    <div class="ui-section">
+        <p class="ui-label">사이즈</p>
+        <div class="ui-chips" id="sizeChips">
+            <button class="chip is-on" data-size="ss">슈퍼싱글</button>
+            <button class="chip" data-size="q">퀸</button>
+            <button class="chip" data-size="k">킹</button>
         </div>
+    </div>
 
-        <!-- 드래그 이동 영역 (투명) -->
-        <div id="arMoveArea"></div>
+    <!-- 침구 색상 -->
+    <div class="ui-section">
+        <p class="ui-label">침구 색상</p>
+        <div class="ui-colors" id="colorChips">
+            <button class="color-chip is-on" data-color="#F5F2EE" data-name="화이트"  style="background:#F5F2EE"></button>
+            <button class="color-chip" data-color="#E5DEC8" data-name="아이보리" style="background:#E5DEC8"></button>
+            <button class="color-chip" data-color="#C9A882" data-name="베이지"   style="background:#C9A882"></button>
+            <button class="color-chip" data-color="#B0B0B0" data-name="그레이"   style="background:#B0B0B0"></button>
+            <button class="color-chip" data-color="#8BA8C8" data-name="블루"     style="background:#8BA8C8"></button>
+            <button class="color-chip" data-color="#283A52" data-name="네이비"   style="background:#283A52"></button>
+        </div>
+        <p class="ui-color-name" id="colorName">화이트</p>
+    </div>
 
-        <!-- 하단 UI -->
-        <div id="arBottom">
+    <!-- 바닥 색상 -->
+    <div class="ui-section">
+        <p class="ui-label">바닥</p>
+        <div class="surface-chips" id="floorChips">
+            <button class="surface-chip is-on" data-key="wood"  style="background:linear-gradient(135deg,#C8A87A,#A8885A)">원목</button>
+            <button class="surface-chip" data-key="tile"  style="background:linear-gradient(135deg,#E0DDD8,#C8C5C0)">타일</button>
+            <button class="surface-chip" data-key="gray"  style="background:linear-gradient(135deg,#B8B4B0,#989490)">그레이</button>
+            <button class="surface-chip" data-key="white" style="background:linear-gradient(135deg,#F5F3F0,#E8E5E0)">화이트</button>
+        </div>
+    </div>
 
-            <!-- 배치 전 버튼 -->
-            <button id="arPlaceBtn" class="ar-place-btn" style="display:none">여기에 배치</button>
+    <!-- 벽 색상 -->
+    <div class="ui-section">
+        <p class="ui-label">벽지</p>
+        <div class="surface-chips" id="wallChips">
+            <button class="surface-chip is-on" data-key="white" style="background:linear-gradient(135deg,#F8F5F2,#EDE9E4)">화이트</button>
+            <button class="surface-chip" data-key="beige" style="background:linear-gradient(135deg,#EAE0D0,#D8CDBA)">베이지</button>
+            <button class="surface-chip" data-key="gray"  style="background:linear-gradient(135deg,#D8D5D0,#C5C2BC)">그레이</button>
+            <button class="surface-chip" data-key="mocha" style="background:linear-gradient(135deg,#C8B8A8,#B0A090)">모카</button>
+        </div>
+    </div>
 
-            <!-- 배치 후 회전 다이얼 -->
-            <div id="rotateBar" style="display:none">
-                <div class="rot-deg-row">
-                    <span id="rotDegLabel">0°</span>
-                </div>
-                <div class="rot-ruler-wrap">
-                    <canvas id="rotCanvas"></canvas>
-                    <div class="rot-center-line"></div>
-                </div>
-                <div class="rot-actions">
-                    <button id="arResetBtn" class="rot-action-btn">다시 배치</button>
-                    <a id="arBuyBtn" class="rot-action-btn buy" href="https://sensemom.com" target="_blank">구매하기</a>
-                </div>
+    <!-- AR 버튼 -->
+    <div id="arSection">
+        <button id="arStartBtn" class="ar-btn">
+            <span class="ar-btn__icon">◎</span>
+            이 상품을 카메라(AR)로 배치해보기
+        </button>
+        <p class="ar-hint" id="arHint">Android Chrome · iPhone Safari(iOS 16+)</p>
+    </div>
+</div>
+
+<!-- ── AR 오버레이 ── -->
+<div id="arOverlay" style="display:none">
+    <div class="ar-guide-wrap">
+        <div class="ar-guide" id="arGuide">바닥을 향해 카메라를 천천히 움직여주세요</div>
+    </div>
+    <div id="arMoveArea"></div>
+    <div id="arBottom">
+        <button id="arPlaceBtn" class="ar-place-btn" style="display:none">여기에 배치</button>
+        <div id="rotateBar" style="display:none">
+            <div class="rot-deg-row"><span id="rotDegLabel">0°</span></div>
+            <div class="rot-ruler-wrap">
+                <canvas id="rotCanvas"></canvas>
+            </div>
+            <div class="rot-actions">
+                <button id="arResetBtn" class="rot-action-btn">다시 배치</button>
+                <a id="arBuyBtn" class="rot-action-btn buy" href="https://sensemom.com" target="_blank">구매하기</a>
             </div>
         </div>
-
-        <!-- 닫기 -->
-        <button id="arEndBtn" class="ar-end-btn">✕</button>
     </div>
+    <button id="arEndBtn" class="ar-end-btn">✕</button>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
-    <script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+<script>
 
-    /* ─── URL 파라미터로 제품 초기값 설정 ─── */
-    var urlParams = new URLSearchParams(window.location.search);
+/* ════════════════════════════════════════════
+   데이터
+════════════════════════════════════════════ */
+var PRODUCTS = {
+    twoside:   { thickness: 0.12, topColor: 0xF2EDE5, sideColor: 0xDDD8D0, hasBand: true,  hasFold: false, hasTopper: true  },
+    signature: { thickness: 0.12, topColor: 0xEAE5DC, sideColor: 0xD5D0C8, hasBand: false, hasFold: false, hasTopper: true  },
+    zip:       { thickness: 0.08, topColor: 0xF5F2EC, sideColor: 0xE0DDD8, hasBand: false, hasFold: true,  hasTopper: false },
+    basic:     { thickness: 0.07, topColor: 0xF8F5F0, sideColor: 0xE8E4DE, hasBand: false, hasFold: false, hasTopper: false }
+};
 
-    /* ─── 제품 데이터 ─── */
-    var PRODUCTS = {
-        twoside:   { name: '투사이드',       thickness: 0.12, topColor: 0xF0EBE3, sideColor: 0xD4CBC0, bandColor: 0xA8BFD0, hasBand: true,  hasFold: false },
-        signature: { name: '시그니처 더나인s', thickness: 0.12, topColor: 0xEAE4DC, sideColor: 0xCCC5BB, hasBand: false, hasFold: false },
-        zip:       { name: 'ZIP 접이식',      thickness: 0.08, topColor: 0xF5F2EC, sideColor: 0xDDD9D0, hasBand: false, hasFold: true  },
-        basic:     { name: '베이직',          thickness: 0.07, topColor: 0xF8F5F0, sideColor: 0xE8E3DC, hasBand: false, hasFold: false }
-    };
+var SIZES = {
+    ss: { w: 1.10, l: 2.00 },
+    q:  { w: 1.52, l: 2.00 },
+    k:  { w: 1.80, l: 2.00 }
+};
 
-    var SIZES = {
-        ss: { w: 1.10, l: 2.00 },
-        q:  { w: 1.52, l: 2.00 },
-        k:  { w: 1.80, l: 2.00 }
-    };
+var FLOOR_COLORS = { wood: 0xC4A07A, tile: 0xDDD9D3, gray: 0xB8B4AF, white: 0xF0EDE8 };
+var WALL_COLORS  = { white: 0xF5F2EE, beige: 0xE8DECE, gray: 0xD5D2CC, mocha: 0xC4B5A8 };
 
-    var state = {
-        prod:         urlParams.get('prod') || 'twoside',
-        size:         urlParams.get('size') || 'ss',
-        beddingColor: 0xF5F2EE,
-        isAR:         false,
-        placed:       false,
-        rotDeg:       0
-    };
+var urlP = new URLSearchParams(window.location.search);
+var state = {
+    prod:    urlP.get('prod') || 'twoside',
+    size:    urlP.get('size') || 'ss',
+    bedding: 0xF5F2EE,
+    floor:   'wood',
+    wall:    'white',
+    isAR:    false,
+    placed:  false,
+    rotDeg:  0
+};
 
-    /* ─── Three.js ─── */
-    var canvas   = document.getElementById('arCanvas');
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
-    renderer.xr.enabled = true;
+/* ════════════════════════════════════════════
+   Three.js 초기화
+════════════════════════════════════════════ */
+var canvas3d = document.getElementById('arCanvas');
+var renderer = new THREE.WebGLRenderer({ canvas: canvas3d, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.xr.enabled = true;
 
-    var scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1A1816);
+var scene  = new THREE.Scene();
+scene.background = new THREE.Color(0x2A2420);
 
-    var camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.01, 30);
-    camera.position.set(0, 1.3, 3.8);
+var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 30);
+camera.position.set(0, 1.4, 4.0);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.75));
-    var sun = new THREE.DirectionalLight(0xFFF8F0, 1.1);
-    sun.position.set(3, 6, 3);
-    sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.left = sun.shadow.camera.bottom = -4;
-    sun.shadow.camera.right = sun.shadow.camera.top = 4;
-    scene.add(sun);
-    scene.add(Object.assign(new THREE.DirectionalLight(0xD0E4F0, 0.35), { position: new THREE.Vector3(-3, 3, -2) }));
+/* 조명 */
+var ambLight = new THREE.AmbientLight(0xffffff, 0.7);
+scene.add(ambLight);
 
-    var floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(10, 10),
-        new THREE.MeshStandardMaterial({ color: 0xBEB5A8, roughness: 0.9 })
+var dirLight = new THREE.DirectionalLight(0xFFF5E8, 1.0);
+dirLight.position.set(3, 5, 3);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.width  = 1024;
+dirLight.shadow.mapSize.height = 1024;
+dirLight.shadow.camera.near = 0.5;
+dirLight.shadow.camera.far  = 20;
+dirLight.shadow.camera.left   = -3;
+dirLight.shadow.camera.right  =  3;
+dirLight.shadow.camera.top    =  3;
+dirLight.shadow.camera.bottom = -3;
+scene.add(dirLight);
+
+var fillLight = new THREE.DirectionalLight(0xC8D8E8, 0.4);
+fillLight.position.set(-3, 3, -2);
+scene.add(fillLight);
+
+/* 바닥 */
+var floorGeo = new THREE.PlaneGeometry(9, 9);
+var floorMat = new THREE.MeshLambertMaterial({ color: FLOOR_COLORS[state.floor] });
+var floorMesh = new THREE.Mesh(floorGeo, floorMat);
+floorMesh.rotation.x = -Math.PI / 2;
+floorMesh.receiveShadow = true;
+scene.add(floorMesh);
+
+/* 뒷벽 */
+var wallMat = new THREE.MeshLambertMaterial({ color: WALL_COLORS[state.wall] });
+var backWallMesh = new THREE.Mesh(new THREE.PlaneGeometry(9, 5), wallMat.clone());
+backWallMesh.position.set(0, 2.5, -4.0);
+scene.add(backWallMesh);
+
+var sideWallMesh = new THREE.Mesh(new THREE.PlaneGeometry(9, 5), wallMat.clone());
+sideWallMesh.position.set(-4.0, 2.5, 0);
+sideWallMesh.rotation.y = Math.PI / 2;
+scene.add(sideWallMesh);
+
+/* AR 레티클 */
+var reticle = new THREE.Mesh(
+    new THREE.RingGeometry(0.13, 0.17, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })
+);
+reticle.rotation.x = -Math.PI / 2;
+reticle.visible = false;
+scene.add(reticle);
+
+/* ════════════════════════════════════════════
+   침대(매트리스) 3D 모델
+════════════════════════════════════════════ */
+var bedGroup = null;
+
+function makeMat(color, rough) {
+    return new THREE.MeshLambertMaterial({ color: color });
+}
+
+function createBed(prodKey, sizeKey, beddingHex) {
+    var p  = PRODUCTS[prodKey];
+    var sz = SIZES[sizeKey];
+    var g  = new THREE.Group();
+
+    var mattH   = p.thickness;
+    var platH   = 0.08;
+    var mattTopY = platH + mattH / 2;
+
+    /* ── 플랫폼 ── */
+    var platMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(sz.w + 0.06, platH, sz.l + 0.06),
+        makeMat(0x5A4A38)
     );
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    scene.add(floor);
+    platMesh.position.y = platH / 2;
+    platMesh.castShadow = platMesh.receiveShadow = true;
+    g.add(platMesh);
 
-    var backWall = new THREE.Mesh(
-        new THREE.PlaneGeometry(10, 5),
-        new THREE.MeshStandardMaterial({ color: 0xE8E2D8, roughness: 1 })
+    /* ── 헤드보드 ── */
+    var hbH   = 0.65;
+    var hbMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(sz.w + 0.06, hbH, 0.08),
+        makeMat(0x6A5040)
     );
-    backWall.position.set(0, 2.5, -4.5);
-    scene.add(backWall);
+    hbMesh.position.set(0, platH + hbH / 2, -sz.l / 2 - 0.04);
+    hbMesh.castShadow = true;
+    g.add(hbMesh);
 
-    var leftWall = new THREE.Mesh(
-        new THREE.PlaneGeometry(10, 5),
-        new THREE.MeshStandardMaterial({ color: 0xE2DCD3, roughness: 1 })
+    /* 헤드보드 내부 패널 */
+    var panMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(sz.w - 0.10, hbH - 0.10, 0.04),
+        makeMat(0x7C6250)
     );
-    leftWall.position.set(-4.5, 2.5, 0);
-    leftWall.rotation.y = Math.PI / 2;
-    scene.add(leftWall);
+    panMesh.position.set(0, platH + hbH / 2, -sz.l / 2 - 0.07);
+    g.add(panMesh);
 
-    var reticle = new THREE.Mesh(
-        new THREE.RingGeometry(0.13, 0.17, 32),
-        new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })
+    /* ── 매트리스 본체 ── */
+    var mattMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(sz.w, mattH, sz.l),
+        makeMat(p.topColor)
     );
-    reticle.rotation.x = -Math.PI / 2;
+    mattMesh.position.y = mattTopY;
+    mattMesh.castShadow = true;
+    g.add(mattMesh);
+
+    /* 매트리스 옆면 (다른 색) */
+    var sideTape = [
+        { w: sz.w,    h: mattH, d: 0.01, x: 0,          z:  sz.l / 2 + 0.005 },
+        { w: sz.w,    h: mattH, d: 0.01, x: 0,          z: -sz.l / 2 - 0.005 },
+        { w: 0.01,    h: mattH, d: sz.l, x:  sz.w / 2 + 0.005, z: 0 },
+        { w: 0.01,    h: mattH, d: sz.l, x: -sz.w / 2 - 0.005, z: 0 }
+    ];
+    var sideMat = makeMat(p.sideColor);
+    sideTape.forEach(function(s) {
+        var m = new THREE.Mesh(new THREE.BoxGeometry(s.w, s.h, s.d), sideMat);
+        m.position.set(s.x, mattTopY, s.z);
+        g.add(m);
+    });
+
+    /* 투사이드 양면 구분 밴드 */
+    if (p.hasBand) {
+        var band = new THREE.Mesh(
+            new THREE.BoxGeometry(sz.w + 0.002, 0.014, sz.l + 0.002),
+            makeMat(0x8AAFC8)
+        );
+        band.position.y = mattTopY;
+        g.add(band);
+    }
+
+    /* ZIP 접이 라인 */
+    if (p.hasFold) {
+        [-sz.l / 3, sz.l / 3].forEach(function(z) {
+            var foldLine = new THREE.Mesh(
+                new THREE.BoxGeometry(sz.w + 0.002, mattH + 0.003, 0.01),
+                makeMat(0xC8C4BC)
+            );
+            foldLine.position.set(0, mattTopY, z);
+            g.add(foldLine);
+        });
+    }
+
+    /* ── 토퍼 ── */
+    var surfaceY = platH + mattH;
+    if (p.hasTopper) {
+        var topperH = 0.05;
+        var topperMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(sz.w - 0.02, topperH, sz.l - 0.02),
+            makeMat(0xFAF8F4)
+        );
+        topperMesh.position.y = surfaceY + topperH / 2;
+        topperMesh.castShadow = true;
+        g.add(topperMesh);
+        surfaceY += topperH;
+    }
+
+    /* ── 이불 ── */
+    var beddingH = 0.09;
+    var beddingZ = sz.l * 0.07;
+    var beddingLen = sz.l * 0.65;
+
+    var beddingMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(sz.w - 0.04, beddingH, beddingLen),
+        makeMat(beddingHex)
+    );
+    beddingMesh.position.set(0, surfaceY + beddingH / 2, beddingZ);
+    beddingMesh.castShadow = true;
+    g.add(beddingMesh);
+
+    /* 이불 접힘 끝단 */
+    var foldColor = Math.min(0xFFFFFF, beddingHex + 0x101010);
+    var foldMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(sz.w - 0.04, 0.022, 0.22),
+        makeMat(foldColor)
+    );
+    foldMesh.position.set(0, surfaceY + beddingH + 0.011, beddingZ - beddingLen / 2 - 0.02);
+    g.add(foldMesh);
+
+    /* ── 베개 ── */
+    var pillowY = surfaceY + 0.04;
+    var pillowZ = -sz.l / 2 + 0.36;
+    [-sz.w * 0.22, sz.w * 0.22].forEach(function(px, i) {
+        var pilMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(sz.w * 0.38, 0.08, 0.52),
+            makeMat(i === 0 ? 0xF8F5F0 : 0xF0ECE8)
+        );
+        pilMesh.position.set(px, pillowY, pillowZ);
+        pilMesh.castShadow = true;
+        g.add(pilMesh);
+    });
+
+    return g;
+}
+
+function updateBed() {
+    if (bedGroup) {
+        var ry = bedGroup.rotation.y;
+        var px = bedGroup.position.x;
+        var pz = bedGroup.position.z;
+        scene.remove(bedGroup);
+        bedGroup = createBed(state.prod, state.size, state.bedding);
+        bedGroup.rotation.y = ry;
+        if (state.placed) { bedGroup.position.x = px; bedGroup.position.z = pz; }
+    } else {
+        bedGroup = createBed(state.prod, state.size, state.bedding);
+    }
+    scene.add(bedGroup);
+}
+
+/* ════════════════════════════════════════════
+   OrbitControls
+════════════════════════════════════════════ */
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0.6, 0);
+controls.minDistance = 1.5;
+controls.maxDistance = 7;
+controls.maxPolarAngle = Math.PI / 2 - 0.02;
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.update();
+
+/* ════════════════════════════════════════════
+   AR
+════════════════════════════════════════════ */
+var hitTestSource = null, localSpace = null, hasHitTest = false;
+var lastCamPos = new THREE.Vector3(), lastCamDir = new THREE.Vector3();
+var lastXRCam  = null;
+var xrController = null;
+var floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+var raycaster  = new THREE.Raycaster();
+
+function placeBed() {
+    if (!bedGroup) return;
+    if (hasHitTest && reticle.visible) {
+        bedGroup.position.copy(reticle.position);
+        floorPlane.constant = -reticle.position.y;
+    } else {
+        var pos = lastCamPos.clone();
+        var dir = lastCamDir.clone();
+        dir.y = 0;
+        if (dir.lengthSq() < 0.001) dir.set(0, 0, -1);
+        dir.normalize();
+        pos.addScaledVector(dir, 2.0);
+        pos.y = 0;
+        bedGroup.position.copy(pos);
+    }
+    state.rotDeg = 0;
+    bedGroup.rotation.y = 0;
+    bedGroup.visible = true;
+    state.placed = true;
     reticle.visible = false;
-    reticle.matrixAutoUpdate = false;
-    scene.add(reticle);
 
-    /* ─── 침대 3D 생성 ─── */
-    var bedGroup = null;
+    var guide = document.getElementById('arGuide');
+    guide.textContent = '화면을 드래그하여 이동하거나 하단의 회전바로 각도를 조절하세요';
+    guide.style.display = 'block';
+    document.getElementById('arPlaceBtn').style.display = 'none';
+    document.getElementById('rotateBar').style.display  = 'flex';
+    initRotCanvas();
+    updateRotDisplay();
+}
 
-    function brightenHex(hex, amt) {
-        return (Math.min(255, ((hex >> 16) & 0xff) + Math.round(amt * 255)) << 16) |
-               (Math.min(255, ((hex >> 8)  & 0xff) + Math.round(amt * 255)) << 8) |
-                Math.min(255, ( hex        & 0xff) + Math.round(amt * 255));
+function startAR() {
+    var btn  = document.getElementById('arStartBtn');
+    var hint = document.getElementById('arHint');
+    if (!navigator.xr) {
+        hint.textContent = '⚠ AR 미지원 브라우저'; hint.style.color = '#ff9090'; return;
     }
-
-    function createBed(prodKey, sizeKey, beddingHex) {
-        var p = PRODUCTS[prodKey], sz = SIZES[sizeKey];
-        var g = new THREE.Group();
-        var PH = 0.10, mattH = p.thickness, mattY = PH + mattH / 2;
-
-        /* 플랫폼 */
-        var platM = new THREE.MeshStandardMaterial({ color: 0x5A4838, roughness: 0.7 });
-        var plat = new THREE.Mesh(new THREE.BoxGeometry(sz.w + 0.06, PH, sz.l + 0.06), platM);
-        plat.position.y = PH / 2; plat.castShadow = plat.receiveShadow = true; g.add(plat);
-
-        /* 헤드보드 */
-        var headM = new THREE.MeshStandardMaterial({ color: 0x6B5040, roughness: 0.6 });
-        var head  = new THREE.Mesh(new THREE.BoxGeometry(sz.w + 0.06, 0.72, 0.07), headM);
-        head.position.set(0, PH + 0.36, -sz.l / 2 - 0.035); head.castShadow = true; g.add(head);
-        var panel = new THREE.Mesh(new THREE.BoxGeometry(sz.w - 0.08, 0.50, 0.04),
-            new THREE.MeshStandardMaterial({ color: 0x7A5E48, roughness: 0.5 }));
-        panel.position.set(0, PH + 0.36, -sz.l / 2 - 0.06); g.add(panel);
-
-        /* 매트리스 */
-        var mats = [
-            new THREE.MeshStandardMaterial({ color: p.sideColor, roughness: 0.9 }),
-            new THREE.MeshStandardMaterial({ color: p.sideColor, roughness: 0.9 }),
-            new THREE.MeshStandardMaterial({ color: p.topColor,  roughness: 0.85 }),
-            new THREE.MeshStandardMaterial({ color: p.topColor,  roughness: 0.85 }),
-            new THREE.MeshStandardMaterial({ color: p.sideColor, roughness: 0.9 }),
-            new THREE.MeshStandardMaterial({ color: p.sideColor, roughness: 0.9 })
-        ];
-        var matt = new THREE.Mesh(new THREE.BoxGeometry(sz.w, mattH, sz.l), mats);
-        matt.position.y = mattY; matt.castShadow = true; g.add(matt);
-
-        if (p.hasBand) {
-            var band = new THREE.Mesh(new THREE.BoxGeometry(sz.w + 0.002, 0.012, sz.l + 0.002),
-                new THREE.MeshStandardMaterial({ color: p.bandColor, roughness: 0.7 }));
-            band.position.y = mattY; g.add(band);
+    navigator.xr.isSessionSupported('immersive-ar').then(function(ok) {
+        if (!ok) {
+            hint.textContent = '⚠ AR 미지원 기기'; hint.style.color = '#ff9090'; return;
         }
-        if (p.hasFold) {
-            [-sz.l / 3, sz.l / 3].forEach(function(z) {
-                var line = new THREE.Mesh(new THREE.BoxGeometry(sz.w + 0.003, mattH + 0.002, 0.008),
-                    new THREE.MeshStandardMaterial({ color: 0xC0BAB0 }));
-                line.position.set(0, mattY, z); g.add(line);
+        btn.disabled = true;
+        btn.textContent = '카메라 시작 중...';
+        navigator.xr.requestSession('immersive-ar', {
+            requiredFeatures: ['local'],
+            optionalFeatures: ['hit-test', 'dom-overlay'],
+            domOverlay: { root: document.getElementById('arOverlay') }
+        }).then(function(session) {
+            renderer.xr.setSession(session);
+
+            xrController = renderer.xr.getController(0);
+            xrController.addEventListener('select', function() {
+                if (!state.placed) placeBed();
             });
-        }
+            scene.add(xrController);
 
-        /* 토퍼 */
-        var bedTopY = mattY + mattH / 2;
-        if (prodKey === 'twoside' || prodKey === 'signature') {
-            var topper = new THREE.Mesh(new THREE.BoxGeometry(sz.w - 0.02, 0.05, sz.l - 0.02),
-                new THREE.MeshStandardMaterial({ color: 0xFAF8F4, roughness: 0.95 }));
-            topper.position.y = bedTopY + 0.025; topper.castShadow = true; g.add(topper);
-            bedTopY += 0.05;
-        }
-
-        /* 이불 */
-        var bM = new THREE.MeshStandardMaterial({ color: beddingHex, roughness: 0.95 });
-        var bdg = new THREE.Mesh(new THREE.BoxGeometry(sz.w - 0.04, 0.09, sz.l * 0.65), bM);
-        bdg.position.set(0, bedTopY + 0.045, sz.l * 0.07); bdg.castShadow = true; g.add(bdg);
-
-        var foldM = new THREE.MeshStandardMaterial({ color: brightenHex(beddingHex, 0.07), roughness: 0.9 });
-        var fold = new THREE.Mesh(new THREE.BoxGeometry(sz.w - 0.04, 0.025, 0.20), foldM);
-        fold.position.set(0, bedTopY + 0.095, -sz.l * 0.65 / 2 + sz.l * 0.07 - 0.02); g.add(fold);
-
-        /* 베개 */
-        [-sz.w * 0.22, sz.w * 0.22].forEach(function(px, i) {
-            var pil = new THREE.Mesh(new THREE.BoxGeometry(sz.w * 0.38, 0.08, 0.52),
-                new THREE.MeshStandardMaterial({ color: i === 0 ? 0xF8F5F0 : 0xF0EDE8, roughness: 0.88 }));
-            pil.position.set(px, bedTopY + 0.04, -sz.l / 2 + 0.35); pil.castShadow = true; g.add(pil);
-        });
-
-        return g;
-    }
-
-    function updateBed() {
-        var prevRot = bedGroup ? bedGroup.rotation.y : 0;
-        var prevPos = bedGroup ? bedGroup.position.clone() : null;
-        if (bedGroup) scene.remove(bedGroup);
-        bedGroup = createBed(state.prod, state.size, state.beddingColor);
-        bedGroup.rotation.y = prevRot;
-        if (prevPos && state.placed) bedGroup.position.copy(prevPos);
-        scene.add(bedGroup);
-    }
-
-    /* ─── OrbitControls ─── */
-    var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0.55, 0);
-    controls.minDistance = 1.5; controls.maxDistance = 7;
-    controls.maxPolarAngle = Math.PI / 2 - 0.02;
-    controls.enableDamping = true; controls.dampingFactor = 0.08;
-    controls.update();
-
-    /* ─── AR 변수 ─── */
-    var hitTestSource = null, localSpace = null, hasHitTest = false;
-    var lastCamPos = new THREE.Vector3(), lastCamDir = new THREE.Vector3();
-    var lastXRCam  = null;
-    var xrController = null;
-    var floorPlane   = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-    var raycaster    = new THREE.Raycaster();
-
-    /* ─── 침대 배치 ─── */
-    function placeBed() {
-        if (!bedGroup) return;
-        if (hasHitTest && reticle.visible) {
-            bedGroup.position.copy(reticle.position);
-            floorPlane.constant = -reticle.position.y;
-        } else {
-            var pos = lastCamPos.clone(), dir = lastCamDir.clone();
-            dir.y = 0; if (dir.length() < 0.001) dir.set(0, 0, -1); dir.normalize();
-            pos.addScaledVector(dir, 2.0); pos.y = 0;
-            bedGroup.position.copy(pos);
-        }
-        state.rotDeg = 0;
-        bedGroup.rotation.y = 0;
-        bedGroup.visible = true;
-        state.placed     = true;
-        reticle.visible  = false;
-
-        document.getElementById('arPlaceBtn').style.display = 'none';
-        document.getElementById('arGuide').textContent = '화면을 드래그하여 이동하거나 하단의 회전바로 각도를 조절하세요';
-        document.getElementById('arGuide').style.display = 'block';
-
-        var rb = document.getElementById('rotateBar');
-        rb.style.display = 'flex';
-        initRotCanvas();
-        updateRotDisplay();
-    }
-
-    /* ─── AR 시작/종료 ─── */
-    function startAR() {
-        var btn  = document.getElementById('arStartBtn');
-        var hint = document.getElementById('arHint');
-
-        if (!navigator.xr) {
-            hint.textContent = '⚠ AR 미지원 브라우저'; hint.style.color = '#ff9090'; return;
-        }
-        navigator.xr.isSessionSupported('immersive-ar').then(function(ok) {
-            if (!ok) {
-                hint.textContent = '⚠ 이 기기는 AR 미지원'; hint.style.color = '#ff9090'; return;
-            }
-            btn.disabled = true; btn.textContent = '카메라 시작 중...';
-            navigator.xr.requestSession('immersive-ar', {
-                requiredFeatures: ['local'],
-                optionalFeatures: ['hit-test', 'dom-overlay'],
-                domOverlay: { root: document.getElementById('arOverlay') }
-            }).then(function(session) {
-                renderer.xr.setSession(session);
-
-                xrController = renderer.xr.getController(0);
-                xrController.addEventListener('select', function() {
-                    if (!state.placed) placeBed();
+            session.requestReferenceSpace('local').then(function(ls) {
+                localSpace = ls;
+                session.requestReferenceSpace('viewer').then(function(vs) {
+                    return session.requestHitTestSource({ space: vs });
+                }).then(function(src) {
+                    hitTestSource = src; hasHitTest = true; reticle.visible = true;
+                }).catch(function() {
+                    hasHitTest = false;
+                    document.getElementById('arGuide').textContent = '화면을 탭해서 침대를 배치하세요';
                 });
-                scene.add(xrController);
-
-                session.requestReferenceSpace('local').then(function(ls) {
-                    localSpace = ls;
-                    session.requestReferenceSpace('viewer').then(function(vs) {
-                        return session.requestHitTestSource({ space: vs });
-                    }).then(function(src) {
-                        hitTestSource = src; hasHitTest = true; reticle.visible = true;
-                    }).catch(function() {
-                        hasHitTest = false; reticle.visible = false;
-                        document.getElementById('arGuide').textContent = '화면을 탭해서 침대를 배치하세요';
-                    });
-                });
-
-                scene.background = null;
-                [floor, backWall, leftWall].forEach(function(m) { m.visible = false; });
-                state.isAR = true; state.placed = false;
-                if (bedGroup) bedGroup.visible = false;
-
-                document.getElementById('productUI').style.display  = 'none';
-                document.getElementById('arOverlay').style.display  = 'flex';
-                document.getElementById('arPlaceBtn').style.display = 'none';
-                document.getElementById('arGuide').style.display    = 'block';
-                document.getElementById('rotateBar').style.display  = 'none';
-                session.addEventListener('end', endAR);
-            }).catch(function(e) {
-                hint.textContent = '⚠ AR 시작 실패: ' + (e.message || e);
-                hint.style.color = '#ff9090';
-                btn.disabled = false;
-                btn.innerHTML = '<span class="ar-btn__icon">◎</span>이 상품을 카메라(AR)로 배치해보기';
             });
+
+            scene.background = null;
+            floorMesh.visible = backWallMesh.visible = sideWallMesh.visible = false;
+            state.isAR = true; state.placed = false;
+            if (bedGroup) bedGroup.visible = false;
+
+            document.getElementById('productUI').style.display  = 'none';
+            document.getElementById('arOverlay').style.display  = 'flex';
+            document.getElementById('arPlaceBtn').style.display = 'none';
+            document.getElementById('rotateBar').style.display  = 'none';
+            document.getElementById('arGuide').style.display    = 'block';
+            session.addEventListener('end', endAR);
+        }).catch(function(e) {
+            hint.textContent = '⚠ AR 시작 실패: ' + (e.message || e);
+            hint.style.color = '#ff9090';
+            btn.disabled = false;
+            btn.innerHTML = '<span class="ar-btn__icon">◎</span>이 상품을 카메라(AR)로 배치해보기';
         });
-    }
+    });
+}
 
-    function endAR() {
-        scene.background = new THREE.Color(0x1A1816);
-        [floor, backWall, leftWall].forEach(function(m) { m.visible = true; });
-        reticle.visible = false;
-        state.isAR = false; state.placed = false;
-        hitTestSource = null; hasHitTest = false;
-        if (xrController) { scene.remove(xrController); xrController = null; }
-        if (bedGroup) { bedGroup.visible = true; bedGroup.rotation.y = 0; bedGroup.position.set(0,0,0); }
-        state.rotDeg = 0;
+function endAR() {
+    scene.background = new THREE.Color(0x2A2420);
+    floorMesh.visible = backWallMesh.visible = sideWallMesh.visible = true;
+    reticle.visible = false;
+    state.isAR = false; state.placed = false;
+    hitTestSource = null; hasHitTest = false;
+    if (xrController) { scene.remove(xrController); xrController = null; }
+    if (bedGroup) { bedGroup.visible = true; bedGroup.rotation.y = 0; bedGroup.position.set(0, 0, 0); }
+    state.rotDeg = 0;
+    var btn = document.getElementById('arStartBtn');
+    btn.disabled = false;
+    btn.innerHTML = '<span class="ar-btn__icon">◎</span>이 상품을 카메라(AR)로 배치해보기';
+    document.getElementById('productUI').style.display  = 'flex';
+    document.getElementById('arOverlay').style.display  = 'none';
+    document.getElementById('rotateBar').style.display  = 'none';
+}
 
-        var btn = document.getElementById('arStartBtn');
-        btn.disabled = false;
-        btn.innerHTML = '<span class="ar-btn__icon">◎</span>이 상품을 카메라(AR)로 배치해보기';
-        document.getElementById('productUI').style.display  = 'flex';
-        document.getElementById('arOverlay').style.display  = 'none';
-        document.getElementById('rotateBar').style.display  = 'none';
-    }
+/* ════════════════════════════════════════════
+   회전 다이얼
+════════════════════════════════════════════ */
+function initRotCanvas() {
+    var c = document.getElementById('rotCanvas');
+    c.width  = window.innerWidth;
+    c.height = 52;
+    drawRuler();
+}
 
-    /* ─── 회전 다이얼 ─── */
-    function initRotCanvas() {
-        var c = document.getElementById('rotCanvas');
-        c.width  = window.innerWidth;
-        c.height = 56;
-        drawRuler();
-    }
+function drawRuler() {
+    var c = document.getElementById('rotCanvas');
+    if (!c || !c.getContext) return;
+    var ctx = c.getContext('2d');
+    var W = c.width, H = c.height;
+    var PX = 3, angle = state.rotDeg;
+    ctx.clearRect(0, 0, W, H);
 
-    function drawRuler() {
-        var c = document.getElementById('rotCanvas');
-        if (!c) return;
-        var ctx = c.getContext('2d');
-        var W = c.width, H = c.height;
-        var PX = 3;           /* 3px = 1° */
-        var angle = state.rotDeg;
-        ctx.clearRect(0, 0, W, H);
-
-        var startD = Math.floor((angle - W / PX / 2) / 5) * 5;
-        var endD   = Math.ceil(( angle + W / PX / 2) / 5) * 5;
-
-        for (var d = startD; d <= endD; d += 5) {
-            var x    = W / 2 + (d - angle) * PX;
-            var big  = (d % 90 === 0);
-            var mid  = (d % 30 === 0);
-            var th   = big ? 22 : mid ? 14 : 7;
-            var alph = big ? 0.9 : mid ? 0.55 : 0.28;
-            ctx.strokeStyle = 'rgba(255,255,255,' + alph + ')';
-            ctx.lineWidth   = big ? 2 : 1;
-            ctx.beginPath(); ctx.moveTo(x, H - th); ctx.lineTo(x, H - 1); ctx.stroke();
-            if (mid) {
-                var lbl = ((((d % 360) + 360) % 360));
-                if (lbl > 180) lbl -= 360;
-                ctx.fillStyle = big ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.45)';
-                ctx.font = big ? 'bold 10px -apple-system,sans-serif' : '9px -apple-system,sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(lbl + '°', x, H - th - 3);
-            }
+    var sd = Math.floor((angle - W / PX / 2) / 5) * 5;
+    var ed = Math.ceil(( angle + W / PX / 2) / 5) * 5;
+    for (var d = sd; d <= ed; d += 5) {
+        var x    = W / 2 + (d - angle) * PX;
+        var big  = (d % 90 === 0);
+        var mid  = (d % 30 === 0);
+        var th   = big ? 20 : mid ? 13 : 6;
+        var al   = big ? 0.9 : mid ? 0.55 : 0.28;
+        ctx.strokeStyle = 'rgba(255,255,255,' + al + ')';
+        ctx.lineWidth   = big ? 2 : 1;
+        ctx.beginPath(); ctx.moveTo(x, H - th); ctx.lineTo(x, H - 1); ctx.stroke();
+        if (mid) {
+            var lbl = ((d % 360) + 360) % 360;
+            if (lbl > 180) lbl -= 360;
+            ctx.fillStyle = big ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.45)';
+            ctx.font = (big ? 'bold ' : '') + '9px -apple-system,sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(lbl + '°', x, H - th - 3);
         }
-
-        /* 중앙 라인 */
-        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-        ctx.lineWidth   = 1.5;
-        ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
-
-        /* 페이드 */
-        var g = ctx.createLinearGradient(0, 0, W, 0);
-        g.addColorStop(0,    'rgba(0,0,0,0.85)');
-        g.addColorStop(0.12, 'rgba(0,0,0,0)');
-        g.addColorStop(0.88, 'rgba(0,0,0,0)');
-        g.addColorStop(1,    'rgba(0,0,0,0.85)');
-        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
 
-    function updateRotDisplay() {
-        var d = Math.round(state.rotDeg);
-        var disp = ((d % 360) + 360) % 360;
-        if (disp > 180) disp -= 360;
-        document.getElementById('rotDegLabel').textContent = disp + '°';
-        drawRuler();
+    var g = ctx.createLinearGradient(0, 0, W, 0);
+    g.addColorStop(0, 'rgba(0,0,0,0.8)'); g.addColorStop(0.12, 'rgba(0,0,0,0)');
+    g.addColorStop(0.88, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.8)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+}
+
+function updateRotDisplay() {
+    var d = Math.round(state.rotDeg);
+    var disp = ((d % 360) + 360) % 360;
+    if (disp > 180) disp -= 360;
+    document.getElementById('rotDegLabel').textContent = disp + '°';
+    drawRuler();
+}
+
+/* ════════════════════════════════════════════
+   터치 이벤트
+════════════════════════════════════════════ */
+var isMoving = false, isRotating = false;
+var rotStartX = 0, rotStartDeg = 0;
+
+var moveArea = document.getElementById('arMoveArea');
+moveArea.addEventListener('touchstart', function(e) {
+    if (!state.placed) return;
+    e.preventDefault(); isMoving = true;
+}, { passive: false });
+moveArea.addEventListener('touchmove', function(e) {
+    if (!isMoving || !state.placed || !bedGroup || !lastXRCam) return;
+    e.preventDefault();
+    var t = e.touches[0];
+    var ndx = (t.clientX / window.innerWidth) * 2 - 1;
+    var ndy = -(t.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(new THREE.Vector2(ndx, ndy), lastXRCam);
+    var tgt = new THREE.Vector3();
+    if (raycaster.ray.intersectPlane(floorPlane, tgt)) {
+        bedGroup.position.x = tgt.x;
+        bedGroup.position.z = tgt.z;
     }
+}, { passive: false });
+moveArea.addEventListener('touchend', function() { isMoving = false; });
 
-    /* ─── 터치: 드래그 이동 + 회전 ─── */
-    var isDragging = false, isRotating = false;
-    var rotTouchX = 0, rotStartDeg = 0;
+var rotC = document.getElementById('rotCanvas');
+rotC.addEventListener('touchstart', function(e) {
+    e.preventDefault(); isRotating = true;
+    rotStartX = e.touches[0].clientX; rotStartDeg = state.rotDeg;
+}, { passive: false });
+rotC.addEventListener('touchmove', function(e) {
+    if (!isRotating) return; e.preventDefault();
+    state.rotDeg = rotStartDeg - (e.touches[0].clientX - rotStartX) * 0.5;
+    if (bedGroup) bedGroup.rotation.y = state.rotDeg * Math.PI / 180;
+    updateRotDisplay();
+}, { passive: false });
+rotC.addEventListener('touchend', function() { isRotating = false; });
 
-    function getFloorPoint(cx, cy) {
-        if (!lastXRCam) return null;
-        var ndx = (cx / window.innerWidth)  * 2 - 1;
-        var ndy = -(cy / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(new THREE.Vector2(ndx, ndy), lastXRCam);
-        var tgt = new THREE.Vector3();
-        return raycaster.ray.intersectPlane(floorPlane, tgt) ? tgt : null;
-    }
+/* 마우스 (PC) */
+var mouseRot = false, msx = 0, msd = 0;
+rotC.addEventListener('mousedown', function(e) { mouseRot = true; msx = e.clientX; msd = state.rotDeg; });
+window.addEventListener('mousemove', function(e) {
+    if (!mouseRot) return;
+    state.rotDeg = msd - (e.clientX - msx) * 0.5;
+    if (bedGroup && state.placed) bedGroup.rotation.y = state.rotDeg * Math.PI / 180;
+    updateRotDisplay();
+});
+window.addEventListener('mouseup', function() { mouseRot = false; });
 
-    var moveArea = document.getElementById('arMoveArea');
-    moveArea.addEventListener('touchstart', function(e) {
-        if (!state.placed) return;
-        e.preventDefault();
-        isDragging = true;
-    }, { passive: false });
+/* ════════════════════════════════════════════
+   UI 이벤트
+════════════════════════════════════════════ */
+document.getElementById('arPlaceBtn').addEventListener('click', placeBed);
+document.getElementById('arEndBtn').addEventListener('click', function() {
+    var s = renderer.xr.getSession(); if (s) s.end(); else endAR();
+});
+document.getElementById('arStartBtn').addEventListener('click', startAR);
+document.getElementById('arResetBtn').addEventListener('click', function() {
+    if (bedGroup) bedGroup.visible = false;
+    state.placed = false; state.rotDeg = 0;
+    document.getElementById('rotateBar').style.display = 'none';
+    reticle.visible = hasHitTest;
+    var guide = document.getElementById('arGuide');
+    guide.textContent = hasHitTest ? '바닥을 향해 카메라를 천천히 움직여주세요' : '화면을 탭해서 침대를 배치하세요';
+    guide.style.display = 'block';
+    if (!hasHitTest) document.getElementById('arPlaceBtn').style.display = 'none';
+});
 
-    moveArea.addEventListener('touchmove', function(e) {
-        if (!isDragging || !state.placed || !bedGroup) return;
-        e.preventDefault();
-        var t = e.touches[0];
-        var pt = getFloorPoint(t.clientX, t.clientY);
-        if (pt) { bedGroup.position.x = pt.x; bedGroup.position.z = pt.z; }
-    }, { passive: false });
+document.getElementById('prodTabs').addEventListener('click', function(e) {
+    var t = e.target.closest('.prod-tab'); if (!t) return;
+    document.querySelectorAll('.prod-tab').forEach(function(b) { b.classList.remove('is-on'); });
+    t.classList.add('is-on'); state.prod = t.dataset.prod; updateBed();
+});
+document.getElementById('sizeChips').addEventListener('click', function(e) {
+    var b = e.target.closest('.chip'); if (!b) return;
+    document.querySelectorAll('.chip').forEach(function(x) { x.classList.remove('is-on'); });
+    b.classList.add('is-on'); state.size = b.dataset.size; updateBed();
+});
+document.getElementById('colorChips').addEventListener('click', function(e) {
+    var b = e.target.closest('.color-chip'); if (!b) return;
+    document.querySelectorAll('.color-chip').forEach(function(x) { x.classList.remove('is-on'); });
+    b.classList.add('is-on');
+    state.bedding = parseInt(b.dataset.color.replace('#',''), 16);
+    document.getElementById('colorName').textContent = b.dataset.name;
+    updateBed();
+});
 
-    moveArea.addEventListener('touchend', function() { isDragging = false; });
+/* 바닥 색 */
+document.getElementById('floorChips').addEventListener('click', function(e) {
+    var b = e.target.closest('.surface-chip'); if (!b) return;
+    document.querySelectorAll('#floorChips .surface-chip').forEach(function(x) { x.classList.remove('is-on'); });
+    b.classList.add('is-on');
+    state.floor = b.dataset.key;
+    floorMesh.material.color.setHex(FLOOR_COLORS[state.floor]);
+});
 
-    var rotC = document.getElementById('rotCanvas');
-    rotC.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        isRotating = true;
-        rotTouchX  = e.touches[0].clientX;
-        rotStartDeg = state.rotDeg;
-    }, { passive: false });
+/* 벽 색 */
+document.getElementById('wallChips').addEventListener('click', function(e) {
+    var b = e.target.closest('.surface-chip'); if (!b) return;
+    document.querySelectorAll('#wallChips .surface-chip').forEach(function(x) { x.classList.remove('is-on'); });
+    b.classList.add('is-on');
+    state.wall = b.dataset.key;
+    backWallMesh.material.color.setHex(WALL_COLORS[state.wall]);
+    sideWallMesh.material.color.setHex(WALL_COLORS[state.wall]);
+});
 
-    rotC.addEventListener('touchmove', function(e) {
-        if (!isRotating) return;
-        e.preventDefault();
-        var dx = e.touches[0].clientX - rotTouchX;
-        state.rotDeg = rotStartDeg - dx * 0.5;
-        if (bedGroup) bedGroup.rotation.y = state.rotDeg * Math.PI / 180;
-        updateRotDisplay();
-    }, { passive: false });
-
-    rotC.addEventListener('touchend', function() { isRotating = false; });
-
-    /* 마우스 지원 (PC) */
-    var isMouseRot = false, mouseRotX = 0, mouseStartDeg = 0;
-    rotC.addEventListener('mousedown', function(e) {
-        isMouseRot = true; mouseRotX = e.clientX; mouseStartDeg = state.rotDeg;
+/* AR 지원 여부 */
+if (navigator.xr) {
+    navigator.xr.isSessionSupported('immersive-ar').then(function(ok) {
+        if (ok) {
+            document.getElementById('arStartBtn').classList.add('is-ready');
+            document.getElementById('arHint').textContent = '이 기기에서 AR을 사용할 수 있습니다';
+            document.getElementById('arHint').classList.add('is-ok');
+        }
     });
-    window.addEventListener('mousemove', function(e) {
-        if (!isMouseRot) return;
-        state.rotDeg = mouseStartDeg - (e.clientX - mouseRotX) * 0.5;
-        if (bedGroup && state.placed) bedGroup.rotation.y = state.rotDeg * Math.PI / 180;
-        updateRotDisplay();
-    });
-    window.addEventListener('mouseup', function() { isMouseRot = false; });
+}
 
-    /* ─── 버튼 이벤트 ─── */
-    document.getElementById('arPlaceBtn').addEventListener('click', placeBed);
-    document.getElementById('arEndBtn').addEventListener('click', function() {
-        var s = renderer.xr.getSession(); if (s) s.end(); else endAR();
+/* URL 파라미터로 탭 초기화 */
+if (urlP.get('prod')) {
+    document.querySelectorAll('.prod-tab').forEach(function(t) {
+        t.classList.toggle('is-on', t.dataset.prod === state.prod);
     });
-    document.getElementById('arStartBtn').addEventListener('click', startAR);
-    document.getElementById('arResetBtn').addEventListener('click', function() {
-        if (bedGroup) { bedGroup.visible = false; }
-        state.placed = false; state.rotDeg = 0;
-        document.getElementById('rotateBar').style.display = 'none';
-        document.getElementById('arPlaceBtn').style.display = hasHitTest ? 'none' : 'block';
-        document.getElementById('arGuide').textContent = hasHitTest
-            ? '바닥을 향해 카메라를 천천히 움직여주세요'
-            : '화면을 탭해서 침대를 배치하세요';
-        document.getElementById('arGuide').style.display = 'block';
-        reticle.visible = hasHitTest;
-    });
+}
 
-    document.getElementById('prodTabs').addEventListener('click', function(e) {
-        var t = e.target.closest('.prod-tab'); if (!t) return;
-        document.querySelectorAll('.prod-tab').forEach(function(b) { b.classList.remove('is-on'); });
-        t.classList.add('is-on'); state.prod = t.dataset.prod; updateBed();
-    });
-    document.getElementById('sizeChips').addEventListener('click', function(e) {
-        var b = e.target.closest('.chip'); if (!b) return;
-        document.querySelectorAll('.chip').forEach(function(x) { x.classList.remove('is-on'); });
-        b.classList.add('is-on'); state.size = b.dataset.size; updateBed();
-    });
-    document.getElementById('colorChips').addEventListener('click', function(e) {
-        var b = e.target.closest('.color-chip'); if (!b) return;
-        document.querySelectorAll('.color-chip').forEach(function(x) { x.classList.remove('is-on'); });
-        b.classList.add('is-on');
-        state.beddingColor = parseInt(b.dataset.color.replace('#',''), 16);
-        document.getElementById('colorName').textContent = b.dataset.name;
-        updateBed();
-    });
-
-    /* 초기 탭 UI 동기화 (URL 파라미터) */
-    if (urlParams.get('prod')) {
-        document.querySelectorAll('.prod-tab').forEach(function(t) {
-            t.classList.toggle('is-on', t.dataset.prod === state.prod);
-        });
-    }
-
-    /* AR 지원 여부 */
-    if (navigator.xr) {
-        navigator.xr.isSessionSupported('immersive-ar').then(function(ok) {
-            if (ok) {
-                document.getElementById('arStartBtn').classList.add('is-ready');
-                document.getElementById('arHint').textContent = '이 기기에서 AR을 사용할 수 있습니다';
-                document.getElementById('arHint').classList.add('is-ok');
-            }
-        });
-    }
-
-    /* ─── 렌더 루프 ─── */
-    renderer.setAnimationLoop(function(time, frame) {
-        if (state.isAR) {
-            lastXRCam = renderer.xr.getCamera(camera);
-            lastXRCam.getWorldPosition(lastCamPos);
-            lastXRCam.getWorldDirection(lastCamDir);
-
-            if (frame && hitTestSource) {
-                var hits = frame.getHitTestResults(hitTestSource);
-                if (hits.length > 0) {
-                    var pose = hits[0].getPose(localSpace);
-                    if (pose) {
-                        reticle.visible = true;
-                        reticle.matrix.fromArray(pose.transform.matrix);
-                        reticle.matrix.decompose(reticle.position, reticle.quaternion, reticle.scale);
-                        if (!state.placed) {
-                            document.getElementById('arPlaceBtn').style.display = 'block';
-                            document.getElementById('arGuide').style.display    = 'none';
-                        }
-                    }
-                } else {
-                    reticle.visible = false;
+/* ════════════════════════════════════════════
+   렌더 루프
+════════════════════════════════════════════ */
+renderer.setAnimationLoop(function(time, frame) {
+    if (state.isAR) {
+        lastXRCam = renderer.xr.getCamera(camera);
+        lastXRCam.getWorldPosition(lastCamPos);
+        lastXRCam.getWorldDirection(lastCamDir);
+        if (frame && hitTestSource) {
+            var hits = frame.getHitTestResults(hitTestSource);
+            if (hits.length > 0) {
+                var pose = hits[0].getPose(localSpace);
+                if (pose) {
+                    reticle.visible = true;
+                    reticle.matrix.fromArray(pose.transform.matrix);
+                    reticle.position.setFromMatrixPosition(reticle.matrix);
                     if (!state.placed) {
-                        document.getElementById('arPlaceBtn').style.display = 'none';
-                        document.getElementById('arGuide').style.display    = 'block';
+                        document.getElementById('arPlaceBtn').style.display = 'block';
+                        document.getElementById('arGuide').style.display    = 'none';
                     }
+                }
+            } else {
+                reticle.visible = false;
+                if (!state.placed) {
+                    document.getElementById('arPlaceBtn').style.display = 'none';
+                    document.getElementById('arGuide').style.display    = 'block';
                 }
             }
         }
-        if (!state.isAR) controls.update();
-        renderer.render(scene, camera);
-    });
+    }
+    if (!state.isAR) controls.update();
+    renderer.render(scene, camera);
+});
 
-    window.addEventListener('resize', function() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        if (state.placed) initRotCanvas();
-    });
+window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    if (state.placed) initRotCanvas();
+});
 
-    updateBed();
-    </script>
+/* 최초 침대 생성 */
+updateBed();
+
+</script>
 </body>
 </html>

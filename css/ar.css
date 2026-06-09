@@ -66,6 +66,18 @@ body {
 .color-chip.is-on { box-shadow: 0 0 0 2px #1A1816, 0 0 0 4px #fff; }
 .ui-color-name { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 5px; }
 
+/* 바닥/벽 칩 */
+.surface-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.surface-chip {
+    height: 34px; padding: 0 12px; border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    font-size: 11px; font-weight: 600; color: rgba(0,0,0,0.6);
+    cursor: pointer; transition: all .2s; font-family: inherit;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+}
+.surface-chip:hover { border-color: rgba(255,255,255,0.5); }
+.surface-chip.is-on { border-color: #fff; border-width: 2px; box-shadow: 0 0 0 1px rgba(255,255,255,0.3); }
+
 /* AR/구매 버튼 */
 #arSection { display: flex; flex-direction: column; gap: 8px; padding-top: 2px; }
 .buy-btn {
