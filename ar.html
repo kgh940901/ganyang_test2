@@ -138,13 +138,17 @@ var PRODUCTS = {
         topImage:  'images/twoside_top.png',   /* 실제 제품 윗면 사진 (있으면 사용) */
         sideImage: 'images/twoside_side.png'   /* 실제 제품 옆면 사진 (선택) */
     },
+    /* 시그니처 더나인s 바닥 매트리스 : 슬레이트 그레이 + 흰색 액센트 라인 */
     signature: {
         h: 0.12,
-        type: 'bed',
-        topHex:  0xEAE4DC,
-        sideHex: 0xD0CBBC,
-        hasBand: false, bandHex: 0,
-        hasFold: false
+        type: 'floor',
+        topHex:  0x4E5460,    /* 슬레이트 그레이 */
+        sideHex: 0x363A44,    /* 약간 더 어두운 사이드 */
+        hasBand: true,
+        bandHex: 0xC8CDD5,    /* 흰색 액센트 라인 */
+        hasFold: false,
+        topImage:  'images/signature_top.png',
+        sideImage: 'images/signature_side.png'
     },
     zip: {
         h: 0.08,
