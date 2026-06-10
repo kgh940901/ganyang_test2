@@ -195,24 +195,24 @@ body {
 /* ── 모바일 : 접을 수 있는 바텀시트 ── */
 @media (max-width: 699px) {
     #productUI {
-        max-height: 52vh;
+        max-height: 72vh;
         transition: transform .32s cubic-bezier(.4,0,.2,1);
-        padding-top: 4px;
+        padding-top: 0;
     }
     .panel-handle {
-        display: flex; align-items: center; justify-content: center;
-        width: 100%; height: 22px; border: none; background: transparent;
-        cursor: pointer; flex-shrink: 0; padding: 0; margin-bottom: 2px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 5px; width: 100%; height: 46px; border: none;
+        background: transparent; cursor: pointer; flex-shrink: 0; padding: 8px 0 4px;
     }
-    .panel-handle span {
-        width: 40px; height: 4px; border-radius: 2px;
-        background: rgba(255,255,255,0.35);
-    }
-    /* 접힌 상태: 헤더+핸들만 보이고 나머지는 아래로 내려감 */
+    .ph-bar { width: 42px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.4); }
+    .ph-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.75); letter-spacing: 1px; }
+    /* 접힌 상태: 핸들(옵션 열기)만 보이고 나머지는 아래로 */
     #productUI.collapsed {
-        transform: translateY(calc(100% - 64px));
+        transform: translateY(calc(100% - 50px));
     }
-    #productUI.collapsed .ui-header { opacity: .85; }
+    /* 접힌 상태에선 헤더/옵션 숨김 (핸들만) */
+    #productUI.collapsed .ui-header,
+    #productUI.collapsed .ui-section { opacity: 0; pointer-events: none; }
 }
 
 /* ── PC 사이드바 ── */
