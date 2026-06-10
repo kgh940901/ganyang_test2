@@ -189,6 +189,32 @@ body {
 }
 .ar-end-btn:hover { background: rgba(0,0,0,0.8); }
 
+/* 패널 핸들 (모바일 접기/펼치기) */
+.panel-handle { display: none; }
+
+/* ── 모바일 : 접을 수 있는 바텀시트 ── */
+@media (max-width: 699px) {
+    #productUI {
+        max-height: 52vh;
+        transition: transform .32s cubic-bezier(.4,0,.2,1);
+        padding-top: 4px;
+    }
+    .panel-handle {
+        display: flex; align-items: center; justify-content: center;
+        width: 100%; height: 22px; border: none; background: transparent;
+        cursor: pointer; flex-shrink: 0; padding: 0; margin-bottom: 2px;
+    }
+    .panel-handle span {
+        width: 40px; height: 4px; border-radius: 2px;
+        background: rgba(255,255,255,0.35);
+    }
+    /* 접힌 상태: 헤더+핸들만 보이고 나머지는 아래로 내려감 */
+    #productUI.collapsed {
+        transform: translateY(calc(100% - 64px));
+    }
+    #productUI.collapsed .ui-header { opacity: .85; }
+}
+
 /* ── PC 사이드바 ── */
 @media (min-width: 700px) {
     #productUI {

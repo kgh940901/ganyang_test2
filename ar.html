@@ -11,6 +11,7 @@
 <canvas id="arCanvas"></canvas>
 
 <div id="productUI">
+    <button class="panel-handle" id="panelHandle" aria-label="패널 열기/닫기"><span></span></button>
     <div class="ui-header">
         <a class="ui-back" href="product.html">←</a>
         <div class="ui-brand">
@@ -440,7 +441,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
 renderer.toneMapping         = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.9;
+renderer.toneMappingExposure = 1.0;
 renderer.outputEncoding      = THREE.sRGBEncoding;
 renderer.xr.enabled = true;
 
@@ -449,6 +450,23 @@ scene.background = new THREE.Color(0x1E1C1A);
 
 var camera = new THREE.PerspectiveCamera(46, window.innerWidth/window.innerHeight, 0.01, 30);
 camera.position.set(0, 1.6, 4.5);
+
+/* 화면 비율에 맞춰 카메라 거리/화각 조정 (모바일 세로에서도 침대가 보이게) */
+function fitCamera(){
+    var aspect = window.innerWidth / window.innerHeight;
+    if (aspect < 0.75) {            /* 세로로 긴 모바일 */
+        camera.fov = 58;
+        camera.position.set(0, 1.9, 5.6);
+    } else if (aspect < 1.1) {      /* 정사각에 가까움 */
+        camera.fov = 52;
+        camera.position.set(0, 1.7, 5.0);
+    } else {                        /* 가로 (PC) */
+        camera.fov = 46;
+        camera.position.set(0, 1.6, 4.5);
+    }
+    camera.aspect = aspect;
+    camera.updateProjectionMatrix();
+}
 
 /* IBL 환경 조명 */
 (function buildEnv(){
@@ -468,7 +486,8 @@ camera.position.set(0, 1.6, 4.5);
 })();
 
 /* 조명 */
-scene.add(new THREE.AmbientLight(0xffffff,0.15));
+scene.add(new THREE.AmbientLight(0xFFF1E2,0.28));
+scene.add(new THREE.HemisphereLight(0xFFF6EC, 0xD8CFC2, 0.35));
 var sun=new THREE.DirectionalLight(0xFFF6E8,0.9); sun.position.set(3,6,3); sun.castShadow=true;
 sun.shadow.mapSize.width=sun.shadow.mapSize.height=2048;
 sun.shadow.camera.near=0.5; sun.shadow.camera.far=20;
@@ -752,8 +771,8 @@ function createBed(prodKey, sizeKey, beddingHex) {
         baseMatt.castShadow = true;
         g.add(baseMatt);
 
-        /* 업홀스터리 헤드보드 (키 큰 패브릭 패널 + 우드 양 기둥) */
-        var hbH = 1.05, hbY = frameH + hbH/2 + 0.05;
+        /* 업홀스터리 헤드보드 (낮은 패브릭 패널 + 우드 양 기둥) */
+        var hbH = 0.62, hbY = frameH + hbH/2 + 0.02;
         var fabricMat = new THREE.MeshStandardMaterial({ color:0xC4BEB2, roughness:0.96, envMapIntensity:0.25 });
         var hbPanel = new THREE.Mesh(new THREE.BoxGeometry(sz.w + 0.10, hbH, 0.07), fabricMat);
         hbPanel.position.set(0, hbY, -plL/2 + 0.02);
@@ -811,7 +830,8 @@ function updateBed(){
 ══════════════════════════════════════════ */
 var controls=new THREE.OrbitControls(camera,cv3d);
 controls.target.set(0,0.45,0); controls.minDistance=1.5; controls.maxDistance=7;
-controls.maxPolarAngle=Math.PI/2-0.02; controls.enableDamping=true; controls.dampingFactor=0.08; controls.update();
+controls.maxPolarAngle=Math.PI/2-0.02; controls.enableDamping=true; controls.dampingFactor=0.08;
+controls.target.set(0,0.5,0); fitCamera(); controls.update();
 
 /* ══════════════════════════════════════════
    AR
@@ -903,6 +923,10 @@ document.getElementById('baseChips').addEventListener('click',function(e){var b=
 document.getElementById('colorChips').addEventListener('click',function(e){var b=e.target.closest('.color-chip');if(!b)return;document.querySelectorAll('.color-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.bedding=parseInt(b.dataset.color.replace('#',''),16);document.getElementById('colorName').textContent=b.dataset.name;updateBed();});
 document.getElementById('floorChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#floorChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.floor=b.dataset.key;var nt=makeWoodTex(FLOOR_HEX[state.floor]);floorMesh.material.map=nt;floorMesh.material.needsUpdate=true;});
 document.getElementById('wallChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#wallChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.wall=b.dataset.key;backWallMesh.material.color.setHex(WALL_HEX[state.wall]);sideWallMesh.material.color.setHex(WALL_HEX[state.wall]);});
+/* 모바일 패널 접기/펼치기 */
+var _panel=document.getElementById('productUI');
+document.getElementById('panelHandle').addEventListener('click',function(){ _panel.classList.toggle('collapsed'); });
+if(window.matchMedia('(max-width:699px)').matches){ _panel.classList.add('collapsed'); }
 if(urlP.get('prod')){document.querySelectorAll('.prod-tab').forEach(function(t){t.classList.toggle('is-on',t.dataset.prod===state.prod);});}
 
 /* ── 렌더 루프 ── */
@@ -914,7 +938,7 @@ renderer.setAnimationLoop(function(time,frame){
     if(!state.isAR)controls.update();
     renderer.render(scene,camera);
 });
-window.addEventListener('resize',function(){camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);if(state.placed)initRotCanvas();});
+window.addEventListener('resize',function(){var aspect=window.innerWidth/window.innerHeight;camera.fov=(aspect<0.75)?58:(aspect<1.1)?52:46;camera.aspect=aspect;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);if(state.placed)initRotCanvas();});
 
 updateBed();
 </script>
