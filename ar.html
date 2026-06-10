@@ -99,13 +99,6 @@
         </div>
     </div>
 
-    <div class="ui-section">
-        <p class="ui-label">공간</p>
-        <div class="ui-chips" id="spaceChips">
-            <button class="chip is-on" data-space="bedroom">침실</button>
-            <button class="chip" data-space="living">거실</button>
-        </div>
-    </div>
 </div>
 
 <div id="arOverlay" style="display:none">
@@ -506,10 +499,7 @@ reticle.rotation.x=-Math.PI/2; reticle.visible=false; scene.add(reticle);
 var roomProps = new THREE.Group();
 scene.add(roomProps);
 
-var SPACE_PRESETS = {
-    bedroom: { wall: 0xEFEAE2, floor: 'wood',  rug: 0xCFC6B8, rug2: 0xE6DFD2, art: 0x3A4250 },
-    living:  { wall: 0xE6E2DB, floor: 'wood',  rug: 0x9FA9A6, rug2: 0xC4CBC7, art: 0x5A6B5E }
-};
+var ROOM_PRESET = { wall: 0xEFEAE2, rug: 0xCFC6B8, rug2: 0xE6DFD2, art: 0x3A4250 };
 
 function clearGroup(grp){
     while(grp.children.length){
@@ -522,7 +512,7 @@ function clearGroup(grp){
 }
 
 function buildRoom(){
-    var pre = SPACE_PRESETS[state.space];
+    var pre = ROOM_PRESET;
     clearGroup(roomProps);
 
     /* 벽 색을 공간 무드에 맞춤 (바닥은 사용자 선택 유지) */
@@ -738,11 +728,14 @@ function createBed(prodKey, sizeKey, beddingHex) {
         }
     }
 
-    /* ── 침대 위 배치: 바닥 매트리스를 모던 플랫폼 침대 위로 ── */
+    /* ── 침대 위 배치: 기존 침대 매트리스 위에 바닥 매트리스를 토퍼로 ── */
     if (p.type === 'floor' && state.base === 'bed') {
-        var frameH = 0.26;
+        var frameH    = 0.22;   /* 우드 플랫폼 높이 */
+        var baseMattH = 0.20;   /* 기존 침대 매트리스 두께 */
+        var lift      = frameH + baseMattH;
+        /* 바닥 매트리스 + 침구 전체를 (플랫폼+베이스매트리스) 위로 */
         for (var ci = 0; ci < g.children.length; ci++) {
-            g.children[ci].position.y += frameH;
+            g.children[ci].position.y += lift;
         }
 
         var oakLight = new THREE.MeshStandardMaterial({ color:0xC8AC85, roughness:0.5, metalness:0.05, envMapIntensity:0.6 });
@@ -750,20 +743,30 @@ function createBed(prodKey, sizeKey, beddingHex) {
 
         /* 우드 플랫폼 (매트리스보다 넓게 — 모던 플랫폼 베드) */
         var plW = sz.w + 0.34, plL = sz.l + 0.34;
-        var topRailH = 0.12;
-        /* 상단 우드 테두리 (매트리스를 감싸는 프레임) */
+        var topRailH = 0.10;
         var rail = new THREE.Mesh(new THREE.BoxGeometry(plW, topRailH, plL), oakLight);
         rail.position.y = frameH - topRailH/2;
         rail.castShadow = rail.receiveShadow = true;
         g.add(rail);
-        /* 하단 베이스 (안쪽으로 들어가 떠 보이는 효과) */
         var plinth = new THREE.Mesh(new THREE.BoxGeometry(plW-0.18, frameH-topRailH, plL-0.18), oakDark);
         plinth.position.y = (frameH-topRailH)/2;
         plinth.castShadow = true;
         g.add(plinth);
 
+        /* 기존 침대 매트리스 (흰색 퀼팅 베이스) */
+        var baseQuilt = makeQuiltTex(0xF6F3EE);
+        var baseMattMat = new THREE.MeshStandardMaterial({ map:baseQuilt, roughness:0.92, envMapIntensity:0.3 });
+        var baseSideMat = new THREE.MeshStandardMaterial({ color:0xEDEAE3, roughness:0.9 });
+        var baseMatt = new THREE.Mesh(
+            new THREE.BoxGeometry(sz.w + 0.06, baseMattH, sz.l + 0.06),
+            [baseSideMat, baseSideMat, baseMattMat, baseSideMat, baseSideMat, baseSideMat]
+        );
+        baseMatt.position.y = frameH + baseMattH/2;
+        baseMatt.castShadow = true;
+        g.add(baseMatt);
+
         /* 업홀스터리 헤드보드 (키 큰 패브릭 패널 + 우드 양 기둥) */
-        var hbH = 0.92, hbY = frameH + hbH/2 - 0.02;
+        var hbH = 1.05, hbY = frameH + hbH/2 + 0.05;
         var fabricMat = new THREE.MeshStandardMaterial({ color:0xC4BEB2, roughness:0.96, envMapIntensity:0.25 });
         var hbPanel = new THREE.Mesh(new THREE.BoxGeometry(sz.w + 0.10, hbH, 0.07), fabricMat);
         hbPanel.position.set(0, hbY, -plL/2 + 0.02);
@@ -933,7 +936,6 @@ document.getElementById('baseChips').addEventListener('click',function(e){var b=
 document.getElementById('colorChips').addEventListener('click',function(e){var b=e.target.closest('.color-chip');if(!b)return;document.querySelectorAll('.color-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.bedding=parseInt(b.dataset.color.replace('#',''),16);document.getElementById('colorName').textContent=b.dataset.name;updateBed();});
 document.getElementById('floorChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#floorChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.floor=b.dataset.key;var nt=makeWoodTex(FLOOR_HEX[state.floor]);floorMesh.material.map=nt;floorMesh.material.needsUpdate=true;});
 document.getElementById('wallChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#wallChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.wall=b.dataset.key;backWallMesh.material.color.setHex(WALL_HEX[state.wall]);sideWallMesh.material.color.setHex(WALL_HEX[state.wall]);});
-document.getElementById('spaceChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('#spaceChips .chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.space=b.dataset.space;buildRoom();});
 if(urlP.get('prod')){document.querySelectorAll('.prod-tab').forEach(function(t){t.classList.toggle('is-on',t.dataset.prod===state.prod);});}
 
 /* ── 렌더 루프 ── */
