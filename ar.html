@@ -456,13 +456,18 @@ camera.position.set(0, 1.6, 4.5);
 
 /* 화면 비율에 맞춰 카메라 거리/화각 조정 (모바일 세로에서도 침대가 보이게) */
 function fitCamera(){
-    var aspect = window.innerWidth / window.innerHeight;
+    var W = window.innerWidth, H = window.innerHeight;
+    var aspect = W / H;
+    camera.clearViewOffset();
     if (aspect < 0.75) {            /* 세로로 긴 모바일 */
-        camera.fov = 58;
-        camera.position.set(0, 1.9, 5.6);
+        camera.fov = 60;
+        camera.position.set(0, 1.9, 5.8);
+        /* 침대를 화면 위쪽으로 올려서 하단 옵션바와 겹치지 않게 */
+        camera.setViewOffset(W, H, 0, Math.round(H * 0.20), W, H);
     } else if (aspect < 1.1) {      /* 정사각에 가까움 */
         camera.fov = 52;
         camera.position.set(0, 1.7, 5.0);
+        camera.setViewOffset(W, H, 0, Math.round(H * 0.12), W, H);
     } else {                        /* 가로 (PC) */
         camera.fov = 46;
         camera.position.set(0, 1.6, 4.5);
@@ -926,13 +931,6 @@ document.getElementById('baseChips').addEventListener('click',function(e){var b=
 document.getElementById('colorChips').addEventListener('click',function(e){var b=e.target.closest('.color-chip');if(!b)return;document.querySelectorAll('.color-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.bedding=parseInt(b.dataset.color.replace('#',''),16);document.getElementById('colorName').textContent=b.dataset.name;updateBed();});
 document.getElementById('floorChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#floorChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.floor=b.dataset.key;var nt=makeWoodTex(FLOOR_HEX[state.floor]);floorMesh.material.map=nt;floorMesh.material.needsUpdate=true;});
 document.getElementById('wallChips').addEventListener('click',function(e){var b=e.target.closest('.surface-chip');if(!b)return;document.querySelectorAll('#wallChips .surface-chip').forEach(function(x){x.classList.remove('is-on');});b.classList.add('is-on');state.wall=b.dataset.key;backWallMesh.material.color.setHex(WALL_HEX[state.wall]);sideWallMesh.material.color.setHex(WALL_HEX[state.wall]);});
-/* 모바일 패널 접기/펼치기 */
-var _panel=document.getElementById('productUI');
-var _phLabel=document.getElementById('phLabel');
-function syncPanelLabel(){ _phLabel.textContent = _panel.classList.contains('collapsed') ? '옵션 열기' : '닫기'; }
-document.getElementById('panelHandle').addEventListener('click',function(){ _panel.classList.toggle('collapsed'); syncPanelLabel(); });
-if(window.matchMedia('(max-width:699px)').matches){ _panel.classList.add('collapsed'); }
-syncPanelLabel();
 if(urlP.get('prod')){document.querySelectorAll('.prod-tab').forEach(function(t){t.classList.toggle('is-on',t.dataset.prod===state.prod);});}
 
 /* ── 렌더 루프 ── */
@@ -944,7 +942,7 @@ renderer.setAnimationLoop(function(time,frame){
     if(!state.isAR)controls.update();
     renderer.render(scene,camera);
 });
-window.addEventListener('resize',function(){var aspect=window.innerWidth/window.innerHeight;camera.fov=(aspect<0.75)?58:(aspect<1.1)?52:46;camera.aspect=aspect;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);if(state.placed)initRotCanvas();});
+window.addEventListener('resize',function(){renderer.setSize(window.innerWidth,window.innerHeight);if(!state.isAR)fitCamera();if(state.placed)initRotCanvas();});
 
 updateBed();
 </script>
